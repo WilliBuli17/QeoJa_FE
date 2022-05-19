@@ -21,6 +21,8 @@ const router = new Router({
   routes: [
     layout('Default', [
       route('Dashboard'),
+      route('Role', null, 'role'),
+      route('Pegawai', null, 'pegawai'),
 
       // Pages
       route('UserProfile', null, 'components/profile'),

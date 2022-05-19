@@ -40,7 +40,7 @@
       <div
         v-if="hasTitle"
         :class="fullHeader ? 'pt-4' : 'pl-3'"
-        class="text-h4 v-card--material__title"
+        class="text-h3 v-card--material__title"
       >
         <slot name="title" />
 

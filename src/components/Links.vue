@@ -1,7 +1,6 @@
 <template>
   <v-container>
     <v-row align="center">
-
       <v-spacer class="hidden-sm-and-down" />
 
       <v-col

@@ -1,22 +1,22 @@
 <template>
   <v-text-field
+    class="pa-4"
     placeholder="Search"
-    class="mr-16"
-    color="secondary"
+    color="primary"
     hide-details
-    style="max-width: 220px"
+    v-bind="$attrs"
+    v-on="$listeners"
   >
     <template
-      v-if="$vuetify.breakpoint.mdAndUp"
       v-slot:append-outer
     >
       <v-btn
-        class="mt-n2 ml-n2"
+        class="mt-n1"
         fab
         small
         elevation="2"
-        height="44"
-        width="44"
+        height="35"
+        width="35"
       >
         <v-icon>mdi-magnify</v-icon>
       </v-btn>
@@ -26,6 +26,6 @@
 
 <script>
   export default {
-    name: 'DefaultSearch',
+    name: 'AppSearch',
   }
 </script>

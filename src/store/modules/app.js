@@ -15,7 +15,7 @@ const state = {
     {
       title: 'Pegawai',
       icon: 'mdi-badge-account',
-      // to: '/components/profile/',
+      to: '/pegawai/',
     },
     {
       title: 'Pelanggan',
@@ -57,31 +57,37 @@ const state = {
       icon: 'mdi-book-open-variant',
       // to: '/tables/regular/',
     },
-    // {
-    //   title: 'Regular Tables',
-    //   icon: 'mdi-clipboard-outline',
-    //   to: '/tables/regular/',
-    // },
-    // {
-    //   title: 'Typography',
-    //   icon: 'mdi-format-font',
-    //   to: '/components/typography/',
-    // },
-    // {
-    //   title: 'Icons',
-    //   icon: 'mdi-chart-bubble',
-    //   to: '/components/icons/',
-    // },
-    // {
-    //   title: 'Google Maps',
-    //   icon: 'mdi-map-marker',
-    //   to: '/maps/google/',
-    // },
-    // {
-    //   title: 'Notifications',
-    //   icon: 'mdi-bell',
-    //   to: '/components/notifications/',
-    // },
+
+    {
+      title: 'User Profile',
+      icon: 'mdi-account',
+      to: '/components/profile/',
+    },
+    {
+      title: 'Regular Tables',
+      icon: 'mdi-clipboard-outline',
+      to: '/tables/regular/',
+    },
+    {
+      title: 'Typography',
+      icon: 'mdi-format-font',
+      to: '/components/typography/',
+    },
+    {
+      title: 'Icons',
+      icon: 'mdi-chart-bubble',
+      to: '/components/icons/',
+    },
+    {
+      title: 'Google Maps',
+      icon: 'mdi-map-marker',
+      to: '/maps/google/',
+    },
+    {
+      title: 'Notifications',
+      icon: 'mdi-bell',
+      to: '/components/notifications/',
+    },
   ],
 }
 
