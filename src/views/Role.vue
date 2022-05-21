@@ -48,11 +48,11 @@
           <v-data-table
             v-else
             :headers="headers"
-            :items="dataRoles"
+            :items="dataRole"
             :search="search"
           >
             <template v-slot:[`item.index`]="{ item }">
-              {{ dataRoles.indexOf(item) + 1 }}
+              {{ dataRole.indexOf(item) + 1 }}
             </template>
 
             <template v-slot:[`item.actions`]="{ item }">
@@ -121,7 +121,7 @@
               <app-text-input
                 v-model="namaRole"
                 :rules="namaRoleRules"
-                label="Nama Role"
+                label="Nama"
               />
             </v-card-text>
 
@@ -172,8 +172,8 @@
       action: null,
       namaRole: null,
       namaRoleRules: [
-        v => !!v || 'Nama Role Harus Diisi',
-        v => (v && v.length <= 100) || 'Nama Role Tidak Boleh Lebih Dari 100 Karakter',
+        v => !!v || 'Nama Harus Diisi',
+        v => (v && v.length <= 100) || 'Nama Tidak Boleh Lebih Dari 100 Karakter',
       ],
       apiService: new ApiService(),
       color: null,
@@ -203,7 +203,7 @@
           class: 'primary--text',
         },
       ],
-      dataRoles: [],
+      dataRole: [],
       search: null,
       editDeleteID: null,
       progressLoading: false,
@@ -284,7 +284,7 @@
       async read () {
         this.progressLoading = true
         const result = await this.apiService.getData(this.$http, 'role')
-        this.dataRoles = result.data.data
+        this.dataRole = result.data.data
         this.progressLoading = false
         this.alert(result.data.status, result.data.message)
       },
