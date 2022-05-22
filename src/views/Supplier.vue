@@ -1,15 +1,15 @@
 <template>
   <v-container
-    id="role-view"
+    id="supplier-view"
     fluid
     tag="section"
   >
     <v-row>
       <v-col cols="12">
         <material-card
-          icon="mdi-badge-account"
+          icon="mdi-archive-outline"
           icon-small
-          title="Role"
+          title="Supplier"
           color="primary"
         >
           <v-row>
@@ -48,11 +48,11 @@
           <v-data-table
             v-else
             :headers="headers"
-            :items="dataRole"
+            :items="dataSupplier"
             :search="search"
           >
             <template v-slot:[`item.index`]="{ item }">
-              {{ dataRole.indexOf(item) + 1 }}
+              {{ dataSupplier.indexOf(item) + 1 }}
             </template>
 
             <template v-slot:[`item.actions`]="{ item }">
@@ -100,7 +100,7 @@
           <template #heading>
             <div class="pt-3 pb-2 px-3 white--text">
               <div class="text-h3 font-weight-normal">
-                {{ action }} Role
+                {{ action }} Supplier
               </div>
             </div>
           </template>
@@ -112,15 +112,15 @@
             <v-card-text
               v-if="action === 'Hapus'"
             >
-              Apakah Anda Yakin Ingin Menghapus Data Role {{ namaRole }}?
+              Apakah Anda Yakin Ingin Menghapus Data Supplier {{ namaSupplier }}?
             </v-card-text>
 
             <v-card-text
               v-else
             >
               <app-text-input
-                v-model="namaRole"
-                :rules="namaRoleRules"
+                v-model="namaSupplier"
+                :rules="namaSupplierRules"
                 label="Nama"
               />
             </v-card-text>
@@ -166,13 +166,13 @@
   import ApiService from '../service/ApiService'
 
   export default {
-    name: 'RoleView',
+    name: 'SupplierView',
 
     data: () => ({
       dialog: false,
       action: null,
-      namaRole: null,
-      namaRoleRules: [
+      namaSupplier: null,
+      namaSupplierRules: [
         v => !!v || 'Nama Harus Diisi',
         v => (v && v.length <= 100) || 'Nama Tidak Boleh Lebih Dari 100 Karakter',
       ],
@@ -205,7 +205,7 @@
           class: 'primary--text',
         },
       ],
-      dataRole: [],
+      dataSupplier: [],
       search: null,
       editDeleteID: null,
       progressLoading: false,
@@ -243,7 +243,7 @@
       dialogOpen (action, item) {
         if (action === 'Ubah' || action === 'Hapus') {
           this.editDeleteID = item.id
-          this.namaRole = item.name
+          this.namaSupplier = item.name
         }
         this.action = action
         this.dialog = true
@@ -265,17 +265,17 @@
         let result
 
         if (this.action === 'Hapus') {
-          result = await this.apiService.deleteData(this.$http, `role/${this.editDeleteID}`)
+          result = await this.apiService.deleteData(this.$http, `supplier/${this.editDeleteID}`)
         } else if (this.$refs.form.validate()) {
           if (this.action === 'Tambah') {
-            const role = new FormData()
-            role.append('name', this.namaRole)
-            result = await this.apiService.storeData(this.$http, 'role', role)
+            const supplier = new FormData()
+            supplier.append('name', this.namaSupplier)
+            result = await this.apiService.storeData(this.$http, 'supplier', supplier)
           } else if (this.action === 'Ubah') {
             const newData = {
-              name: this.namaRole,
+              name: this.namaSupplier,
             }
-            result = await this.apiService.updateData(this.$http, `role/${this.editDeleteID}`, newData)
+            result = await this.apiService.updateData(this.$http, `supplier/${this.editDeleteID}`, newData)
           }
         }
 
@@ -285,8 +285,8 @@
       },
       async read () {
         this.progressLoading = true
-        const result = await this.apiService.getData(this.$http, 'role')
-        this.dataRole = result.data.data
+        const result = await this.apiService.getData(this.$http, 'supplier')
+        this.dataSupplier = result.data.data
         this.progressLoading = false
         this.alert(result.data.status, result.data.message)
       },

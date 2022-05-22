@@ -23,18 +23,22 @@ const router = new Router({
       route('Dashboard'),
       route('Role', null, 'role'),
       route('Pegawai', null, 'pegawai'),
+      route('Produk', null, 'produk'),
+      route('Supplier', null, 'supplier'),
+      route('Kategori', null, 'kategori'),
+      route('Kota', null, 'role'),
+      route('TrukEkspedisi', null, 'role'),
+      route('Bank', null, 'role'),
+      // route('Error', null, '*'),
 
       // Pages
       route('UserProfile', null, 'components/profile'),
-
       // Components
       route('Notifications', null, 'components/notifications'),
       route('Icons', null, 'components/icons'),
       route('Typography', null, 'components/typography'),
-
       // Tables
       route('Regular Tables', null, 'tables/regular'),
-
       // Maps
       route('Google Maps', null, 'maps/google'),
     ]),

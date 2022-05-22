@@ -385,6 +385,7 @@
         'bottom right',
       ],
       snackbar: false,
+      multiLine: true,
     }),
 
     computed: {

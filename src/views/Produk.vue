@@ -1,6 +1,6 @@
 <template>
   <v-container
-    id="pegawai-view"
+    id="produk-view"
     fluid
     tag="section"
   >
@@ -9,21 +9,23 @@
       justify="end"
     >
       <app-btn
+        v-for="menu in subMenu"
+        :key="menu.name"
+        class="ma-1"
         medium
         rel="noopener noreferrer"
-        width="100"
-        :to="'/role/'"
+        :to="menu.to"
       >
-        <span>Kelola Role</span>
+        <span>Kelola {{ menu.name }}</span>
       </app-btn>
     </v-row>
 
     <v-row>
       <v-col cols="12">
         <material-card
-          icon="mdi-badge-account"
+          icon="mdi-archive-outline"
           icon-small
-          title="Pegawai"
+          title="Produk"
           color="primary"
         >
           <v-row>
@@ -62,11 +64,11 @@
           <v-data-table
             v-else
             :headers="headers"
-            :items="dataPegawai"
+            :items="dataProduk"
             :search="search"
           >
             <template v-slot:[`item.index`]="{ item }">
-              {{ dataPegawai.indexOf(item) + 1 }}
+              {{ dataProduk.indexOf(item) + 1 }}
             </template>
 
             <template v-slot:[`item.avatar`]="{ item }">
@@ -115,18 +117,18 @@
                   v-if="item.deleted_at === null"
                   left
                 >
-                  mdi-account-lock-outline
+                  mdi-archive-cancel-outline
                 </v-icon>
 
                 <v-icon
                   v-else
                   left
                 >
-                  mdi-account-reactivate
+                  mdi-archive-refresh-outline
                 </v-icon>
 
                 <span>
-                  {{ statusShowReverse(item.deleted_at) }}kan
+                  {{ statusShowReverse(item.deleted_at) }}
                 </span>
               </app-btn>
             </template>
@@ -148,7 +150,7 @@
           <template #heading>
             <div class="pt-3 pb-2 px-3 white--text">
               <div class="text-h3 font-weight-normal">
-                {{ action }} Pegawai
+                {{ action }} Produk
               </div>
             </div>
           </template>
@@ -160,7 +162,7 @@
             <v-card-text
               v-if="action === 'Hapus'"
             >
-              Apakah Anda Yakin Ingin {{ statusShowReverse(status) }}kan Data Pegawai {{ form.name }}?
+              Apakah Anda Yakin Ingin {{ statusShowReverse(status) }} Data Produk {{ form.name }}?
             </v-card-text>
 
             <v-card-text
@@ -194,7 +196,7 @@
                   <v-icon left>
                     mdi-image-edit-outline
                   </v-icon>
-                  <span>Upload Foto Pegawai</span>
+                  <span>Upload Foto Produk</span>
                 </app-btn>
 
                 <input
@@ -216,16 +218,16 @@
                   :color="status === null ? 'light-blue darken-3' : 'red accent-3'"
                   text-color="white"
                 >
-                  Pegawai {{ statusShow(status) }}
+                  Produk {{ statusShow(status) }}
                 </v-chip>
               </v-row>
 
               <v-row>
                 <v-col
                   cols="12"
-                  sm="6"
-                  md="6"
-                  lg="6"
+                  sm="12"
+                  md="12"
+                  lg="12"
                 >
                   <app-text-input
                     v-model="form.name"
@@ -233,20 +235,19 @@
                     label="Nama"
                   />
                 </v-col>
+              </v-row>
 
+              <v-row>
                 <v-col
                   cols="12"
-                  sm="6"
-                  md="6"
-                  lg="6"
+                  sm="12"
+                  md="12"
+                  lg="12"
                 >
-                  <app-text-autocomplete
-                    v-model="form.roleId"
-                    :items="dataRole"
-                    item-text="name"
-                    item-value="id"
-                    :rules="roleIdRules"
-                    label="Role"
+                  <app-text-input
+                    v-model="form.description"
+                    :rules="descriptionRules"
+                    label="Deskripsi"
                   />
                 </v-col>
               </v-row>
@@ -258,10 +259,13 @@
                   md="6"
                   lg="6"
                 >
-                  <app-text-input
-                    v-model="form.email"
-                    :rules="emailRules"
-                    label="Email"
+                  <app-text-autocomplete
+                    v-model="form.categoryId"
+                    :items="dataKategori"
+                    item-text="name"
+                    item-value="id"
+                    :rules="categoryIdRules"
+                    label="Kategori"
                   />
                 </v-col>
 
@@ -271,10 +275,13 @@
                   md="6"
                   lg="6"
                 >
-                  <app-text-input
-                    v-model="form.phone"
-                    :rules="phoneRules"
-                    label="No. Telp"
+                  <app-text-autocomplete
+                    v-model="form.suplierId"
+                    :items="dataSupplier"
+                    item-text="name"
+                    item-value="id"
+                    :rules="suplierIdRules"
+                    label="Supplier"
                   />
                 </v-col>
               </v-row>
@@ -282,68 +289,55 @@
               <v-row>
                 <v-col
                   cols="12"
-                  sm="3"
-                  md="3"
-                  lg="3"
+                  :sm="action === 'Ubah' ? 3 : 4"
+                  :md="action === 'Ubah' ? 3 : 4"
+                  :lg="action === 'Ubah' ? 3 : 4"
                 >
-                  <app-text-autocomplete
-                    v-model="form.gander"
-                    :items="dataGander"
-                    item-text="name"
-                    item-value="id"
-                    :rules="ganderRules"
-                    label="Jenis Kelamin"
+                  <app-text-input
+                    v-model="form.volume"
+                    :rules="volumeRules"
+                    label="Volume"
                   />
                 </v-col>
 
                 <v-col
                   cols="12"
-                  sm="3"
-                  md="3"
-                  lg="3"
+                  :sm="action === 'Ubah' ? 3 : 4"
+                  :md="action === 'Ubah' ? 3 : 4"
+                  :lg="action === 'Ubah' ? 3 : 4"
                 >
-                  <v-menu
-                    v-model="dateInput"
-                    :close-on-content-click="false"
-                    transition="scale-transition"
-                    offset-y
-                    min-width="auto"
-                    v-bind="$attrs"
-                    v-on="$listeners"
-                  >
-                    <template
-                      v-slot:activator="{ on, attrs }"
-                    >
-                      <v-text-field
-                        v-model="form.dateJoin"
-                        color="primary"
-                        label="Tanggal Bergabung"
-                        :rules="dateJoinRules"
-                        readonly
-                        dense
-                        required
-                        v-bind="attrs"
-                        v-on="on"
-                      />
-                    </template>
+                  <app-text-input
+                    v-model="form.unit"
+                    :rules="unitRules"
+                    label="Satuan"
+                  />
+                </v-col>
 
-                    <v-date-picker
-                      v-model="form.dateJoin"
-                      @input="dateInput = false"
-                    />
-                  </v-menu>
+                <v-col
+                  v-if="action === 'Ubah'"
+                  cols="12"
+                  :sm="action === 'Ubah' ? 3 : 4"
+                  :md="action === 'Ubah' ? 3 : 4"
+                  :lg="action === 'Ubah' ? 3 : 4"
+                >
+                  <app-text-input
+                    v-model="form.stockQuantity"
+                    label="Stock"
+                    disabled
+                  />
                 </v-col>
 
                 <v-col
                   cols="12"
-                  sm="6"
-                  md="6"
-                  lg="6"
+                  :sm="action === 'Ubah' ? 3 : 4"
+                  :md="action === 'Ubah' ? 3 : 4"
+                  :lg="action === 'Ubah' ? 3 : 4"
                 >
                   <app-text-input
-                    v-model="form.address"
-                    :rules="addressRules"
-                    label="Alamat"
+                    v-model="form.price"
+                    :rules="priceules"
+                    prefix="Rp."
+                    label="Harga"
                   />
                 </v-col>
               </v-row>
@@ -368,7 +362,7 @@
                 :loading="loadingButton"
                 @click="setForm"
               >
-                {{ statusShowReverse(status) }}kan
+                {{ statusShowReverse(status) }}
               </v-btn>
             </v-card-actions>
           </v-form>
@@ -390,45 +384,61 @@
   import ApiService from '../service/ApiService'
 
   export default {
-    name: 'PegawaiView',
+    name: 'ProdukView',
 
     data: () => ({
+      subMenu: [
+        {
+          name: 'Supplier',
+          to: '/supplier/',
+        },
+        {
+          name: 'Kategori',
+          to: '/kategori/',
+        },
+        {
+          name: 'Riwayat Produk',
+          to: '/riwayat-produk/',
+        },
+      ],
       dialog: false,
       action: null,
       form: {
-        email: null,
         name: null,
-        gander: null,
-        phone: null,
-        address: null,
-        dateJoin: null,
-        roleId: null,
+        description: null,
+        unit: null,
+        volume: null,
+        price: null,
+        stockQuantity: null,
+        categoryId: null,
+        suplierId: null,
       },
-      emailRules: [
-        v => !!v || 'Email Harus Diisi',
-        (v) => !v || /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) || 'Format E-mail Tidak Valid',
-      ],
       nameRules: [
         v => !!v || 'Nama Harus Diisi',
         v => (v && v.length <= 100) || 'Nama Tidak Boleh Lebih Dari 100 Karakter',
       ],
-      ganderRules: [
-        v => !!v || 'Jenis Kelamin Harus Diisi',
+      descriptionRules: [
+        v => !!v || 'Deskripsi Harus Diisi',
       ],
-      phoneRules: [
-        v => !!v || 'No. Telp. Harus Diisi',
-        (v) => !v || /^\(?(?:\+62|62|0)(?:\d{2,3})?\)?[ .-]?\d{2,4}[ .-]?\d{2,4}[ .-]?\d{2,4}/.test(v) || 'Format No. Telp. Tidak Valid',
+      unitRules: [
+        v => !!v || 'Satuan Kelamin Harus Diisi',
       ],
-      addressRules: [
-        v => !!v || 'Alamat Harus Diisi',
+      volumeRules: [
+        v => !!v || 'Volume Harus Diisi',
+        (v) => !v || /^[0-9]\d*(\.\d+)?$/.test(v) || 'Format Volume Tidak Valid',
       ],
-      dateJoinRules: [
-        v => !!v || 'Tanggal Bergabung Harus Diisi',
+      priceules: [
+        v => !!v || 'Harga Harus Diisi',
+        (v) => !v || /^[1-9]\d*$/.test(v) || 'Format Harga Tidak Valid',
       ],
-      roleIdRules: [
-        v => !!v || 'Role Harus Diisi',
+      categoryIdRules: [
+        v => !!v || 'Kategori Bergabung Harus Diisi',
       ],
-      dataRole: [],
+      suplierIdRules: [
+        v => !!v || 'Supplier Harus Diisi',
+      ],
+      dataSupplier: [],
+      dataKategori: [],
       dataGander: [
         {
           id: 'man',
@@ -472,22 +482,29 @@
           class: 'primary--text',
         },
         {
-          text: 'Role',
-          value: 'role',
+          text: 'Category',
+          value: 'category',
           align: 'start',
           sortable: true,
           class: 'primary--text',
         },
         {
-          text: 'Email',
-          value: 'email',
+          text: 'Suplier',
+          value: 'suplier',
           align: 'start',
           sortable: true,
           class: 'primary--text',
         },
         {
-          text: 'Phone',
-          value: 'phone',
+          text: 'Harga',
+          value: 'price',
+          align: 'start',
+          sortable: true,
+          class: 'primary--text',
+        },
+        {
+          text: 'Stock',
+          value: 'stock_quantity',
           align: 'start',
           sortable: true,
           class: 'primary--text',
@@ -507,7 +524,7 @@
           class: 'primary--text',
         },
       ],
-      dataPegawai: [],
+      dataProduk: [],
       images: null,
       search: null,
       editDeleteID: null,
@@ -548,20 +565,22 @@
     mounted () {
       this.images = this.$file
       this.read()
-      this.readRole()
+      this.readSupplier()
+      this.readKategori()
     },
 
     methods: {
       dialogOpen (action, item) {
         if (action === 'Ubah' || action === 'Hapus') {
           this.editDeleteID = item.id
-          this.form.email = item.email
           this.form.name = item.name
-          this.form.gander = item.gander
-          this.form.phone = item.phone
-          this.form.address = item.address
-          this.form.dateJoin = item.date_join
-          this.form.roleId = item.role_id
+          this.form.description = item.description
+          this.form.unit = item.unit
+          this.form.volume = item.volume
+          this.form.price = item.price
+          this.form.stockQuantity = item.stock_quantity
+          this.form.categoryId = item.category_id
+          this.form.suplierId = item.suplier_id
           this.srcImage = item.picture
           this.status = item.deleted_at
         }
@@ -598,24 +617,24 @@
         let result
 
         if (this.action === 'Hapus') {
-          result = await this.apiService.deleteData(this.$http, `employee/${this.editDeleteID}`)
+          result = await this.apiService.deleteData(this.$http, `product/${this.editDeleteID}`)
         } else if (this.$refs.form.validate()) {
-          const employee = new FormData()
-          employee.append('email', this.form.email)
-          employee.append('name', this.form.name)
-          employee.append('gander', this.form.gander)
-          employee.append('phone', this.form.phone)
-          employee.append('address', this.form.address)
-          employee.append('date_join', this.form.dateJoin)
-          employee.append('role_id', this.form.roleId)
+          const product = new FormData()
+          product.append('name', this.form.name)
+          product.append('description', this.form.description)
+          product.append('unit', this.form.unit)
+          product.append('volume', this.form.volume)
+          product.append('price', this.form.price)
+          product.append('category_id', this.form.categoryId)
+          product.append('suplier_id', this.form.suplierId)
           if (this.selectedFile != null) {
-            employee.append('picture', this.selectedFile)
+            product.append('picture', this.selectedFile)
           }
 
           if (this.action === 'Tambah') {
-            result = await this.apiService.storeData(this.$http, 'employee', employee)
+            result = await this.apiService.storeData(this.$http, 'product', product)
           } else if (this.action === 'Ubah') {
-            result = await this.apiService.storeData(this.$http, `employee/${this.editDeleteID}`, employee)
+            result = await this.apiService.storeData(this.$http, `product/${this.editDeleteID}`, product)
           }
         }
 
@@ -625,28 +644,32 @@
       },
       async read () {
         this.progressLoading = true
-        const result = await this.apiService.getData(this.$http, 'employee')
-        this.dataPegawai = result.data.data
+        const result = await this.apiService.getData(this.$http, 'product')
+        this.dataProduk = result.data.data
         this.progressLoading = false
         this.alert(result.data.status, result.data.message)
       },
-      async readRole () {
-        const result = await this.apiService.getData(this.$http, 'role')
-        this.dataRole = result.data.data
+      async readSupplier () {
+        const result = await this.apiService.getData(this.$http, 'supplier')
+        this.dataSupplier = result.data.data
+      },
+      async readKategori () {
+        const result = await this.apiService.getData(this.$http, 'category')
+        this.dataKategori = result.data.data
       },
       statusShow (item) {
         if (item === null) {
-          return 'Aktif'
+          return 'Di Jual'
         }
 
-        return 'Non-Aktif'
+        return 'Di Arsip'
       },
       statusShowReverse (item) {
         if (item === null) {
-          return 'Non-Aktif'
+          return 'Arsipkan'
         }
 
-        return 'Aktif'
+        return 'Pulihkan'
       },
     },
   }
