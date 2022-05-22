@@ -11,17 +11,16 @@
       <app-btn
         medium
         rel="noopener noreferrer"
-        width="100"
-        :to="'/role/'"
+        :to="'/status-transaksi/'"
       >
-        <span>Kelola Role</span>
+        <span>Kelola Status Transaksi</span>
       </app-btn>
     </v-row>
 
     <v-row>
       <v-col cols="12">
         <material-card
-          icon="mdi-badge-account"
+          icon="mdi-paper-roll-outline"
           icon-small
           title="Pegawai"
           color="primary"

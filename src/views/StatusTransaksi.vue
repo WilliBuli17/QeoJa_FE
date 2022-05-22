@@ -1,15 +1,15 @@
 <template>
   <v-container
-    id="supplier-view"
+    id="status-transaksi-view"
     fluid
     tag="section"
   >
     <v-row>
       <v-col cols="12">
         <material-card
-          icon="mdi-archive-outline"
+          icon="mdi-badge-account"
           icon-small
-          title="Supplier"
+          title="Status Transaksi"
           color="primary"
         >
           <v-row>
@@ -48,11 +48,11 @@
           <v-data-table
             v-else
             :headers="headers"
-            :items="dataSupplier"
+            :items="dataStatusTransaksi"
             :search="search"
           >
             <template v-slot:[`item.index`]="{ item }">
-              {{ dataSupplier.indexOf(item) + 1 }}
+              {{ dataStatusTransaksi.indexOf(item) + 1 }}
             </template>
 
             <template v-slot:[`item.actions`]="{ item }">
@@ -100,7 +100,7 @@
           <template #heading>
             <div class="pt-3 pb-2 px-3 white--text">
               <div class="text-h3 font-weight-normal">
-                {{ action }} Supplier
+                {{ action }} Status Transaksi
               </div>
             </div>
           </template>
@@ -112,15 +112,15 @@
             <v-card-text
               v-if="action === 'Hapus'"
             >
-              Apakah Anda Yakin Ingin Menghapus Data Supplier {{ namaSupplier }}?
+              Apakah Anda Yakin Ingin Menghapus Data Status Transaksi {{ namaStatus }}?
             </v-card-text>
 
             <v-card-text
               v-else
             >
               <app-text-input
-                v-model="namaSupplier"
-                :rules="namaSupplierRules"
+                v-model="namaStatus"
+                :rules="namaStatusRules"
                 label="Nama"
               />
             </v-card-text>
@@ -166,13 +166,13 @@
   import ApiService from '../service/ApiService'
 
   export default {
-    name: 'SupplierView',
+    name: 'StatusTransaksiView',
 
     data: () => ({
       dialog: false,
       action: null,
-      namaSupplier: null,
-      namaSupplierRules: [
+      namaStatus: null,
+      namaStatusRules: [
         v => !!v || 'Nama Harus Diisi',
         v => (v && v.length <= 100) || 'Nama Tidak Boleh Lebih Dari 100 Karakter',
       ],
@@ -205,7 +205,7 @@
           class: 'primary--text',
         },
       ],
-      dataSupplier: [],
+      dataStatusTransaksi: [],
       search: null,
       editDeleteID: null,
       progressLoading: false,
@@ -243,7 +243,7 @@
       dialogOpen (action, item) {
         if (action === 'Ubah' || action === 'Hapus') {
           this.editDeleteID = item.id
-          this.namaSupplier = item.name
+          this.namaStatus = item.name
         }
         this.action = action
         this.dialog = true
@@ -265,7 +265,7 @@
 
         if (this.action === 'Hapus') {
           this.loadingButton = true
-          result = await this.apiService.deleteData(this.$http, `supplier/${this.editDeleteID}`)
+          result = await this.apiService.deleteData(this.$http, `transactionStatus/${this.editDeleteID}`)
 
           this.alert(result.data.status, result.data.message)
           this.read()
@@ -273,14 +273,14 @@
         } else if (this.$refs.form.validate()) {
           this.loadingButton = true
           if (this.action === 'Tambah') {
-            const supplier = new FormData()
-            supplier.append('name', this.namaSupplier)
-            result = await this.apiService.storeData(this.$http, 'supplier', supplier)
+            const transactionStatus = new FormData()
+            transactionStatus.append('name', this.namaStatus)
+            result = await this.apiService.storeData(this.$http, 'transactionStatus', transactionStatus)
           } else if (this.action === 'Ubah') {
             const newData = {
-              name: this.namaSupplier,
+              name: this.namaStatus,
             }
-            result = await this.apiService.updateData(this.$http, `supplier/${this.editDeleteID}`, newData)
+            result = await this.apiService.updateData(this.$http, `transactionStatus/${this.editDeleteID}`, newData)
           }
 
           this.alert(result.data.status, result.data.message)
@@ -290,8 +290,8 @@
       },
       async read () {
         this.progressLoading = true
-        const result = await this.apiService.getData(this.$http, 'supplier')
-        this.dataSupplier = result.data.data
+        const result = await this.apiService.getData(this.$http, 'transactionStatus')
+        this.dataStatusTransaksi = result.data.data
         this.progressLoading = false
         this.alert(result.data.status, result.data.message)
       },

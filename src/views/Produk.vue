@@ -589,8 +589,8 @@
       },
       dialogClose () {
         this.dialog = false
-        this.$refs.form.resetValidation()
         this.$refs.form.reset()
+        this.$refs.form.resetValidation()
         this.loadingButton = false
         this.editDeleteID = null
         this.selectedFile = null
@@ -613,12 +613,17 @@
         this.selectedFile = e.target.files[0]
       },
       async setForm () {
-        this.loadingButton = true
         let result
 
         if (this.action === 'Hapus') {
+          this.loadingButton = true
           result = await this.apiService.deleteData(this.$http, `product/${this.editDeleteID}`)
+
+          this.alert(result.data.status, result.data.message)
+          this.read()
+          this.dialogClose()
         } else if (this.$refs.form.validate()) {
+          this.loadingButton = true
           const product = new FormData()
           product.append('name', this.form.name)
           product.append('description', this.form.description)
@@ -636,11 +641,11 @@
           } else if (this.action === 'Ubah') {
             result = await this.apiService.storeData(this.$http, `product/${this.editDeleteID}`, product)
           }
-        }
 
-        this.alert(result.data.status, result.data.message)
-        this.read()
-        this.dialogClose()
+          this.alert(result.data.status, result.data.message)
+          this.read()
+          this.dialogClose()
+        }
       },
       async read () {
         this.progressLoading = true

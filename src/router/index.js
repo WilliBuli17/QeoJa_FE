@@ -26,9 +26,11 @@ const router = new Router({
       route('Produk', null, 'produk'),
       route('Supplier', null, 'supplier'),
       route('Kategori', null, 'kategori'),
-      route('Kota', null, 'role'),
-      route('TrukEkspedisi', null, 'role'),
-      route('Bank', null, 'role'),
+      route('Kota', null, 'kota'),
+      route('Truk Ekspedisi', null, 'truk-ekspedisi'),
+      route('Bank', null, 'bank'),
+      route('Transaksi Pelanggan', null, 'transaksi-pelanggan'),
+      route('Status Transaksi', null, 'status-transaksi'),
       // route('Error', null, '*'),
 
       // Pages

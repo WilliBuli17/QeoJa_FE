@@ -1,15 +1,15 @@
 <template>
   <v-container
-    id="supplier-view"
+    id="bank-view"
     fluid
     tag="section"
   >
     <v-row>
       <v-col cols="12">
         <material-card
-          icon="mdi-archive-outline"
+          icon="mdi-cash-multiple"
           icon-small
-          title="Supplier"
+          title="Bank"
           color="primary"
         >
           <v-row>
@@ -48,11 +48,11 @@
           <v-data-table
             v-else
             :headers="headers"
-            :items="dataSupplier"
+            :items="dataBank"
             :search="search"
           >
             <template v-slot:[`item.index`]="{ item }">
-              {{ dataSupplier.indexOf(item) + 1 }}
+              {{ dataBank.indexOf(item) + 1 }}
             </template>
 
             <template v-slot:[`item.actions`]="{ item }">
@@ -100,7 +100,7 @@
           <template #heading>
             <div class="pt-3 pb-2 px-3 white--text">
               <div class="text-h3 font-weight-normal">
-                {{ action }} Supplier
+                {{ action }} Bank
               </div>
             </div>
           </template>
@@ -112,16 +112,28 @@
             <v-card-text
               v-if="action === 'Hapus'"
             >
-              Apakah Anda Yakin Ingin Menghapus Data Supplier {{ namaSupplier }}?
+              Apakah Anda Yakin Ingin Menghapus Data Bank {{ form.bankName }} - {{ form.accountName }}?
             </v-card-text>
 
             <v-card-text
               v-else
             >
               <app-text-input
-                v-model="namaSupplier"
-                :rules="namaSupplierRules"
-                label="Nama"
+                v-model="form.bankName"
+                :rules="bankNameRules"
+                label="Nama Bank"
+              />
+
+              <app-text-input
+                v-model="form.accountName"
+                :rules="accountNameRules"
+                label="Nama Akun"
+              />
+
+              <app-text-input
+                v-model="form.accountNumber"
+                :rules="accountNumberRules"
+                label="No. Rek."
               />
             </v-card-text>
 
@@ -166,15 +178,27 @@
   import ApiService from '../service/ApiService'
 
   export default {
-    name: 'SupplierView',
+    name: 'BankView',
 
     data: () => ({
       dialog: false,
       action: null,
-      namaSupplier: null,
-      namaSupplierRules: [
-        v => !!v || 'Nama Harus Diisi',
-        v => (v && v.length <= 100) || 'Nama Tidak Boleh Lebih Dari 100 Karakter',
+      form: {
+        bankName: null,
+        accountName: null,
+        accountNumber: null,
+      },
+      bankNameRules: [
+        v => !!v || 'Nama Bank Harus Diisi',
+        v => (v && v.length <= 100) || 'Nama Bank Tidak Boleh Lebih Dari 100 Karakter',
+      ],
+      accountNameRules: [
+        v => !!v || 'Nama Akun Harus Diisi',
+        v => (v && v.length <= 100) || 'Nama Akun Tidak Boleh Lebih Dari 100 Karakter',
+      ],
+      accountNumberRules: [
+        v => !!v || 'No. Rek. Harus Diisi',
+        (v) => !v || /^[1-9]\d*$/.test(v) || 'Format No. Rek. Tidak Valid',
       ],
       apiService: new ApiService(),
       color: null,
@@ -191,8 +215,22 @@
           class: 'primary--text',
         },
         {
-          text: 'Nama',
-          value: 'name',
+          text: 'Nama Bank',
+          value: 'bank_name',
+          align: 'start',
+          sortable: true,
+          class: 'primary--text',
+        },
+        {
+          text: 'Nama Akun',
+          value: 'account_name',
+          align: 'start',
+          sortable: true,
+          class: 'primary--text',
+        },
+        {
+          text: 'No. Rek.',
+          value: 'account_number',
           align: 'start',
           sortable: true,
           class: 'primary--text',
@@ -205,7 +243,7 @@
           class: 'primary--text',
         },
       ],
-      dataSupplier: [],
+      dataBank: [],
       search: null,
       editDeleteID: null,
       progressLoading: false,
@@ -243,7 +281,9 @@
       dialogOpen (action, item) {
         if (action === 'Ubah' || action === 'Hapus') {
           this.editDeleteID = item.id
-          this.namaSupplier = item.name
+          this.form.bankName = item.bank_name
+          this.form.accountName = item.account_name
+          this.form.accountNumber = item.account_number
         }
         this.action = action
         this.dialog = true
@@ -265,7 +305,7 @@
 
         if (this.action === 'Hapus') {
           this.loadingButton = true
-          result = await this.apiService.deleteData(this.$http, `supplier/${this.editDeleteID}`)
+          result = await this.apiService.deleteData(this.$http, `bankPayment/${this.editDeleteID}`)
 
           this.alert(result.data.status, result.data.message)
           this.read()
@@ -273,14 +313,18 @@
         } else if (this.$refs.form.validate()) {
           this.loadingButton = true
           if (this.action === 'Tambah') {
-            const supplier = new FormData()
-            supplier.append('name', this.namaSupplier)
-            result = await this.apiService.storeData(this.$http, 'supplier', supplier)
+            const bank = new FormData()
+            bank.append('bank_name', this.form.bankName)
+            bank.append('account_name', this.form.accountName)
+            bank.append('account_number', this.form.accountNumber)
+            result = await this.apiService.storeData(this.$http, 'bankPayment', bank)
           } else if (this.action === 'Ubah') {
             const newData = {
-              name: this.namaSupplier,
+              bank_name: this.form.bankName,
+              account_name: this.form.accountName,
+              account_number: this.form.accountNumber,
             }
-            result = await this.apiService.updateData(this.$http, `supplier/${this.editDeleteID}`, newData)
+            result = await this.apiService.updateData(this.$http, `bankPayment/${this.editDeleteID}`, newData)
           }
 
           this.alert(result.data.status, result.data.message)
@@ -290,8 +334,8 @@
       },
       async read () {
         this.progressLoading = true
-        const result = await this.apiService.getData(this.$http, 'supplier')
-        this.dataSupplier = result.data.data
+        const result = await this.apiService.getData(this.$http, 'bankPayment')
+        this.dataBank = result.data.data
         this.progressLoading = false
         this.alert(result.data.status, result.data.message)
       },

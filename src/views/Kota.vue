@@ -1,15 +1,15 @@
 <template>
   <v-container
-    id="supplier-view"
+    id="kota-view"
     fluid
     tag="section"
   >
     <v-row>
       <v-col cols="12">
         <material-card
-          icon="mdi-archive-outline"
+          icon="mdi-google-maps"
           icon-small
-          title="Supplier"
+          title="Kota"
           color="primary"
         >
           <v-row>
@@ -48,11 +48,11 @@
           <v-data-table
             v-else
             :headers="headers"
-            :items="dataSupplier"
+            :items="dataKota"
             :search="search"
           >
             <template v-slot:[`item.index`]="{ item }">
-              {{ dataSupplier.indexOf(item) + 1 }}
+              {{ dataKota.indexOf(item) + 1 }}
             </template>
 
             <template v-slot:[`item.actions`]="{ item }">
@@ -100,7 +100,7 @@
           <template #heading>
             <div class="pt-3 pb-2 px-3 white--text">
               <div class="text-h3 font-weight-normal">
-                {{ action }} Supplier
+                {{ action }} Kota
               </div>
             </div>
           </template>
@@ -112,16 +112,23 @@
             <v-card-text
               v-if="action === 'Hapus'"
             >
-              Apakah Anda Yakin Ingin Menghapus Data Supplier {{ namaSupplier }}?
+              Apakah Anda Yakin Ingin Menghapus Data Kota {{ form.name }}?
             </v-card-text>
 
             <v-card-text
               v-else
             >
               <app-text-input
-                v-model="namaSupplier"
-                :rules="namaSupplierRules"
+                v-model="form.name"
+                :rules="nameRules"
                 label="Nama"
+              />
+
+              <app-text-input
+                v-model="form.expeditionCost"
+                :rules="expeditionCostRules"
+                prefix="Rp."
+                label="Harga Ekspedisi"
               />
             </v-card-text>
 
@@ -166,15 +173,23 @@
   import ApiService from '../service/ApiService'
 
   export default {
-    name: 'SupplierView',
+    name: 'KotaView',
 
     data: () => ({
       dialog: false,
       action: null,
-      namaSupplier: null,
-      namaSupplierRules: [
+      form: {
+        name: null,
+        expeditionCost: null,
+      },
+      nameRules: [
         v => !!v || 'Nama Harus Diisi',
         v => (v && v.length <= 100) || 'Nama Tidak Boleh Lebih Dari 100 Karakter',
+      ],
+      expeditionCostRules: [
+        v => !!v || 'Harga Ekspedisi Harus Diisi',
+        (v) => !v || /^[1-9]\d*$/.test(v) || 'Format Harga Tidak Valid',
+        v => (v && v >= 10000 && v <= 9999999) || 'Harga Ekspedisi Harus diantara Rp. 10.000 - Rp. 9.999.999',
       ],
       apiService: new ApiService(),
       color: null,
@@ -198,6 +213,13 @@
           class: 'primary--text',
         },
         {
+          text: 'Expedition Cost',
+          value: 'expedition_cost',
+          align: 'start',
+          sortable: true,
+          class: 'primary--text',
+        },
+        {
           text: 'Action',
           value: 'actions',
           align: 'end',
@@ -205,7 +227,7 @@
           class: 'primary--text',
         },
       ],
-      dataSupplier: [],
+      dataKota: [],
       search: null,
       editDeleteID: null,
       progressLoading: false,
@@ -243,7 +265,8 @@
       dialogOpen (action, item) {
         if (action === 'Ubah' || action === 'Hapus') {
           this.editDeleteID = item.id
-          this.namaSupplier = item.name
+          this.form.name = item.name
+          this.form.expeditionCost = item.expedition_cost
         }
         this.action = action
         this.dialog = true
@@ -265,7 +288,7 @@
 
         if (this.action === 'Hapus') {
           this.loadingButton = true
-          result = await this.apiService.deleteData(this.$http, `supplier/${this.editDeleteID}`)
+          result = await this.apiService.deleteData(this.$http, `city/${this.editDeleteID}`)
 
           this.alert(result.data.status, result.data.message)
           this.read()
@@ -273,14 +296,16 @@
         } else if (this.$refs.form.validate()) {
           this.loadingButton = true
           if (this.action === 'Tambah') {
-            const supplier = new FormData()
-            supplier.append('name', this.namaSupplier)
-            result = await this.apiService.storeData(this.$http, 'supplier', supplier)
+            const kota = new FormData()
+            kota.append('name', this.form.name)
+            kota.append('expedition_cost', this.form.expeditionCost)
+            result = await this.apiService.storeData(this.$http, 'city', kota)
           } else if (this.action === 'Ubah') {
             const newData = {
-              name: this.namaSupplier,
+              name: this.form.name,
+              expedition_cost: this.form.expeditionCost,
             }
-            result = await this.apiService.updateData(this.$http, `supplier/${this.editDeleteID}`, newData)
+            result = await this.apiService.updateData(this.$http, `city/${this.editDeleteID}`, newData)
           }
 
           this.alert(result.data.status, result.data.message)
@@ -290,8 +315,8 @@
       },
       async read () {
         this.progressLoading = true
-        const result = await this.apiService.getData(this.$http, 'supplier')
-        this.dataSupplier = result.data.data
+        const result = await this.apiService.getData(this.$http, 'city')
+        this.dataKota = result.data.data
         this.progressLoading = false
         this.alert(result.data.status, result.data.message)
       },

@@ -30,22 +30,22 @@ const state = {
     {
       title: 'Kota',
       icon: 'mdi-google-maps',
-      to: '/role/',
+      to: '/kota/',
     },
     {
       title: 'Truk Ekspedisi',
       icon: 'mdi-truck-cargo-container',
-      to: '/role/',
+      to: '/truk-ekspedisi/',
     },
     {
       title: 'Bank',
       icon: 'mdi-cash-multiple',
-      to: '/role/',
+      to: '/bank/',
     },
     {
       title: 'Transaksi Pelanggan',
       icon: 'mdi-paper-roll-outline',
-      // to: '/tables/regular/',
+      to: '/transaksi-pelanggan/',
     },
     {
       title: 'Pengiriman Transaksi',
