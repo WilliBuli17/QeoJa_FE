@@ -290,6 +290,9 @@
       },
       dialogClose () {
         this.dialog = false
+        Object.keys(this.form).forEach(key => {
+          this.form[key] = null
+        })
         this.$refs.form.reset()
         this.$refs.form.resetValidation()
         this.loadingButton = false

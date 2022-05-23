@@ -55,6 +55,10 @@
               {{ dataKota.indexOf(item) + 1 }}
             </template>
 
+            <template v-slot:[`item.expedition_cost`]="{ item }">
+              Rp. {{ formatExample(item.expedition_cost) }}
+            </template>
+
             <template v-slot:[`item.actions`]="{ item }">
               <app-btn
                 small
@@ -273,6 +277,9 @@
       },
       dialogClose () {
         this.dialog = false
+        Object.keys(this.form).forEach(key => {
+          this.form[key] = null
+        })
         this.$refs.form.reset()
         this.$refs.form.resetValidation()
         this.loadingButton = false
@@ -319,6 +326,10 @@
         this.dataKota = result.data.data
         this.progressLoading = false
         this.alert(result.data.status, result.data.message)
+      },
+      formatExample (value) {
+        const val = (value / 1).toFixed(2).replace('.', ',')
+        return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
       },
     },
   }

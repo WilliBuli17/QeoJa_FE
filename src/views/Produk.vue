@@ -81,6 +81,10 @@
               </v-avatar>
             </template>
 
+            <template v-slot:[`item.price`]="{ item }">
+              Rp. {{ formatExample(item.price) }}
+            </template>
+
             <template v-slot:[`item.deleted_at`]="{ item }">
               <v-chip
                 class="ma-2"
@@ -439,16 +443,6 @@
       ],
       dataSupplier: [],
       dataKategori: [],
-      dataGander: [
-        {
-          id: 'man',
-          name: 'Pria',
-        },
-        {
-          id: 'woman',
-          name: 'Wanita',
-        },
-      ],
       dateInput: false,
       selectedFile: null,
       isSelecting: false,
@@ -589,6 +583,9 @@
       },
       dialogClose () {
         this.dialog = false
+        Object.keys(this.form).forEach(key => {
+          this.form[key] = null
+        })
         this.$refs.form.reset()
         this.$refs.form.resetValidation()
         this.loadingButton = false
@@ -675,6 +672,10 @@
         }
 
         return 'Pulihkan'
+      },
+      formatExample (value) {
+        const val = (value / 1).toFixed(2).replace('.', ',')
+        return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
       },
     },
   }

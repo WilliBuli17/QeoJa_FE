@@ -250,6 +250,7 @@
       },
       dialogClose () {
         this.dialog = false
+        this.namaRole = null
         this.$refs.form.reset()
         this.$refs.form.resetValidation()
         this.loadingButton = false

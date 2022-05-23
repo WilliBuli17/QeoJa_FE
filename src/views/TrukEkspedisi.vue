@@ -1,15 +1,15 @@
 <template>
   <v-container
-    id="role-view"
+    id="  truk-ekspedisi-view"
     fluid
     tag="section"
   >
     <v-row>
       <v-col cols="12">
         <material-card
-          icon="mdi-badge-account"
+          icon="mdi-truck-cargo-container"
           icon-small
-          title="Role"
+          title="Truk Ekspedisi"
           color="primary"
         >
           <v-row>
@@ -33,7 +33,7 @@
                 medium
                 :class="$vuetify.breakpoint.mdAndUp ? 'mt-4' : 'mt-n10'"
                 rel="noopener noreferrer"
-                :width="widthBtn"
+                :width="width"
                 @click="dialogOpen('Tambah', null)"
               >
                 <span>Tambah Data</span>
@@ -48,11 +48,31 @@
           <v-data-table
             v-else
             :headers="headers"
-            :items="dataRole"
+            :items="dataTrukEkspedisi"
             :search="search"
           >
             <template v-slot:[`item.index`]="{ item }">
-              {{ dataRole.indexOf(item) + 1 }}
+              {{ dataTrukEkspedisi.indexOf(item) + 1 }}
+            </template>
+
+            <template v-slot:[`item.avatar`]="{ item }">
+              <v-avatar
+                size="45"
+              >
+                <v-img
+                  :src="images + item.picture"
+                />
+              </v-avatar>
+            </template>
+
+            <template v-slot:[`item.status`]="{ item }">
+              <v-chip
+                class="ma-2"
+                :color="item.status === 'available' ? 'light-blue darken-3' : 'red accent-3'"
+                text-color="white"
+              >
+                {{ statusShow(item.status) }}
+              </v-chip>
             </template>
 
             <template v-slot:[`item.actions`]="{ item }">
@@ -90,7 +110,7 @@
     <v-dialog
       v-model="dialog"
       persistent
-      :width="widthDialog"
+      :width="width"
     >
       <v-card>
         <material-card
@@ -100,7 +120,7 @@
           <template #heading>
             <div class="pt-3 pb-2 px-3 white--text">
               <div class="text-h3 font-weight-normal">
-                {{ action }} Role
+                {{ action }} Truk Ekspedisi
               </div>
             </div>
           </template>
@@ -112,16 +132,82 @@
             <v-card-text
               v-if="action === 'Hapus'"
             >
-              Apakah Anda Yakin Ingin Menghapus Data Role {{ namaRole }}?
+              Apakah Anda Yakin Ingin Menghapus Data Truk Ekspedisi {{ form.licenseId }}?
             </v-card-text>
 
             <v-card-text
               v-else
             >
+              <v-row
+                justify="center"
+                class="mb-2"
+              >
+                <v-avatar
+                  v-if="selectedFile != null || srcImage != null"
+                  size="250"
+                >
+                  <v-img
+                    :src="fotoPreview"
+                  />
+                </v-avatar>
+              </v-row>
+
+              <v-row
+                justify="center"
+                class="mb-5"
+              >
+                <app-btn
+                  small
+                  rel="noopener noreferrer"
+                  width="auto"
+                  :loading="isSelecting"
+                  @click="onButtonClick"
+                >
+                  <v-icon left>
+                    mdi-image-edit-outline
+                  </v-icon>
+                  <span>Upload Foto Truk Ekspedisi</span>
+                </app-btn>
+
+                <input
+                  ref="uploader"
+                  class="d-none"
+                  type="file"
+                  accept="image/*"
+                  @change="onFileChanged"
+                >
+              </v-row>
+
+              <v-row
+                v-if="action === 'Ubah'"
+                justify="center"
+                class="mb-5"
+              >
+                <v-chip
+                  class="ma-2"
+                  :color="status === 'available' ? 'light-blue darken-3' : 'red accent-3'"
+                  text-color="white"
+                >
+                  Truk Ekspedisi {{ statusShow(status) }}
+                </v-chip>
+              </v-row>
+
               <app-text-input
-                v-model="namaRole"
-                :rules="namaRoleRules"
-                label="Nama"
+                v-model="form.licenseId"
+                :rules="licenseIdRules"
+                label="No. Plat"
+              />
+
+              <app-text-input
+                v-model="form.minVolume"
+                :rules="minVolumeRules"
+                label="Min. Volume"
+              />
+
+              <app-text-input
+                v-model="form.maxVolume"
+                :rules="maxVolumeRules"
+                label="Maks. Volume"
               />
             </v-card-text>
 
@@ -166,16 +252,32 @@
   import ApiService from '../service/ApiService'
 
   export default {
-    name: 'RoleView',
+    name: 'TrukEkspedisiView',
 
     data: () => ({
       dialog: false,
       action: null,
-      namaRole: null,
-      namaRoleRules: [
-        v => !!v || 'Nama Harus Diisi',
-        v => (v && v.length <= 100) || 'Nama Tidak Boleh Lebih Dari 100 Karakter',
+      form: {
+        licenseId: null,
+        minVolume: null,
+        maxVolume: null,
+      },
+      licenseIdRules: [
+        v => !!v || 'No. Plat Harus Diisi',
       ],
+      minVolumeRules: [
+        v => !!v || 'Minimal Volume Harus Diisi',
+        v => (v && v > 0) || 'Minimal Volume Tidak Boleh Lebih Kecil Dari 0',
+        (v) => !v || /^[1-9]\d*$/.test(v) || 'Format Minimal Volume  Tidak Valid',
+      ],
+      maxVolumeRules: [
+        v => !!v || 'Maksimal Volume Harus Diisi',
+        (v) => !v || /^[1-9]\d*$/.test(v) || 'Format Maksimal Volume  Tidak Valid',
+      ],
+      dateInput: false,
+      selectedFile: null,
+      isSelecting: false,
+      srcImage: null,
       apiService: new ApiService(),
       color: null,
       title: null,
@@ -191,8 +293,36 @@
           class: 'primary--text',
         },
         {
-          text: 'Nama',
-          value: 'name',
+          text: 'Avatar',
+          value: 'avatar',
+          align: 'start',
+          sortable: false,
+          class: 'primary--text',
+        },
+        {
+          text: 'No. Plat',
+          value: 'license_id',
+          align: 'start',
+          sortable: true,
+          class: 'primary--text',
+        },
+        {
+          text: 'Min. Volume',
+          value: 'min_volume',
+          align: 'start',
+          sortable: true,
+          class: 'primary--text',
+        },
+        {
+          text: 'Maks. Volume',
+          value: 'max_volume',
+          align: 'start',
+          sortable: true,
+          class: 'primary--text',
+        },
+        {
+          text: 'Status',
+          value: 'status',
           align: 'start',
           sortable: true,
           class: 'primary--text',
@@ -201,19 +331,21 @@
           text: 'Action',
           value: 'actions',
           align: 'end',
-          sortable: true,
+          sortable: false,
           class: 'primary--text',
         },
       ],
-      dataRole: [],
+      dataTrukEkspedisi: [],
+      images: null,
       search: null,
       editDeleteID: null,
+      status: null,
       progressLoading: false,
       loadingButton: false,
     }),
 
     computed: {
-      widthBtn () {
+      width () {
         switch (this.$vuetify.breakpoint.name) {
           case 'xs': return '100%'
           case 'sm': return '100%'
@@ -223,19 +355,16 @@
           default : return '100%'
         }
       },
-      widthDialog () {
-        switch (this.$vuetify.breakpoint.name) {
-          case 'xs': return '100%'
-          case 'sm': return '60%'
-          case 'md': return '40%'
-          case 'lg': return '25%'
-          case 'xl': return '15%'
-          default : return '100%'
+      fotoPreview () {
+        if (this.selectedFile === null && this.action === 'Ubah') {
+          return this.images + this.srcImage
         }
+        return URL.createObjectURL(this.selectedFile)
       },
     },
 
     mounted () {
+      this.images = this.$file
       this.read()
     },
 
@@ -243,16 +372,25 @@
       dialogOpen (action, item) {
         if (action === 'Ubah' || action === 'Hapus') {
           this.editDeleteID = item.id
-          this.namaRole = item.name
+          this.form.licenseId = item.license_id
+          this.form.minVolume = item.min_volume
+          this.form.maxVolume = item.max_volume
+          this.status = item.status
         }
         this.action = action
         this.dialog = true
       },
       dialogClose () {
         this.dialog = false
+        Object.keys(this.form).forEach(key => {
+          this.form[key] = null
+        })
         this.$refs.form.reset()
         this.$refs.form.resetValidation()
         this.loadingButton = false
+        this.editDeleteID = null
+        this.selectedFile = null
+        this.srcImage = null
       },
       alert (status, message) {
         this.color = status === 'success' ? 'success' : 'error'
@@ -260,27 +398,40 @@
         this.subtitle = message
         this.snackbar = true
       },
+      onButtonClick () {
+        this.isSelecting = true
+        window.addEventListener('focus', () => {
+          this.isSelecting = false
+        }, { once: true })
+        this.$refs.uploader.click()
+      },
+      onFileChanged (e) {
+        this.selectedFile = e.target.files[0]
+      },
       async setForm () {
         let result
 
         if (this.action === 'Hapus') {
           this.loadingButton = true
-          result = await this.apiService.deleteData(this.$http, `role/${this.editDeleteID}`)
+          result = await this.apiService.deleteData(this.$http, `expeditionTruck/${this.editDeleteID}`)
 
           this.alert(result.data.status, result.data.message)
           this.read()
           this.dialogClose()
         } else if (this.$refs.form.validate()) {
           this.loadingButton = true
+          const expeditionTruck = new FormData()
+          expeditionTruck.append('license_id', this.form.licenseId)
+          expeditionTruck.append('min_volume', this.form.minVolume)
+          expeditionTruck.append('max_volume', this.form.maxVolume)
+          if (this.selectedFile != null) {
+            expeditionTruck.append('picture', this.selectedFile)
+          }
+
           if (this.action === 'Tambah') {
-            const role = new FormData()
-            role.append('name', this.namaRole)
-            result = await this.apiService.storeData(this.$http, 'role', role)
+            result = await this.apiService.storeData(this.$http, 'expeditionTruck', expeditionTruck)
           } else if (this.action === 'Ubah') {
-            const newData = {
-              name: this.namaRole,
-            }
-            result = await this.apiService.updateData(this.$http, `role/${this.editDeleteID}`, newData)
+            result = await this.apiService.storeData(this.$http, `expeditionTruck/${this.editDeleteID}`, expeditionTruck)
           }
 
           this.alert(result.data.status, result.data.message)
@@ -290,10 +441,17 @@
       },
       async read () {
         this.progressLoading = true
-        const result = await this.apiService.getData(this.$http, 'role')
-        this.dataRole = result.data.data
+        const result = await this.apiService.getData(this.$http, 'expeditionTruck')
+        this.dataTrukEkspedisi = result.data.data
         this.progressLoading = false
         this.alert(result.data.status, result.data.message)
+      },
+      statusShow (item) {
+        if (item === 'available') {
+          return 'Aktif'
+        }
+
+        return 'Non-Aktif'
       },
     },
   }
