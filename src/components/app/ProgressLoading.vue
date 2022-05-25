@@ -20,9 +20,9 @@
         indeterminate
         rounded
         height="6"
-        />
-      </v-col>
-    </v-row>
+      />
+    </v-col>
+  </v-row>
 </template>
 
 <script>
