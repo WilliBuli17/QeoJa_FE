@@ -538,6 +538,7 @@
           default : return '100%'
         }
       },
+
       widthDialog () {
         switch (this.$vuetify.breakpoint.name) {
           case 'xs': return '100%'
@@ -548,6 +549,7 @@
           default : return '100%'
         }
       },
+
       fotoPreview () {
         if (this.selectedFile === null && this.action === 'Ubah') {
           return this.images + this.srcImage
@@ -581,6 +583,7 @@
         this.action = action
         this.dialog = true
       },
+
       dialogClose () {
         this.dialog = false
         Object.keys(this.form).forEach(key => {
@@ -593,12 +596,14 @@
         this.selectedFile = null
         this.srcImage = null
       },
+
       alert (status, message) {
         this.color = status === 'success' ? 'success' : 'error'
         this.title = status
         this.subtitle = message
         this.snackbar = true
       },
+
       onButtonClick () {
         this.isSelecting = true
         window.addEventListener('focus', () => {
@@ -606,9 +611,11 @@
         }, { once: true })
         this.$refs.uploader.click()
       },
+
       onFileChanged (e) {
         this.selectedFile = e.target.files[0]
       },
+
       async setForm () {
         let result
 
@@ -644,6 +651,7 @@
           this.dialogClose()
         }
       },
+
       async read () {
         this.progressLoading = true
         const result = await this.apiService.getData(this.$http, 'product')
@@ -651,14 +659,17 @@
         this.progressLoading = false
         this.alert(result.data.status, result.data.message)
       },
+
       async readSupplier () {
         const result = await this.apiService.getData(this.$http, 'supplier')
         this.dataSupplier = result.data.data
       },
+
       async readKategori () {
         const result = await this.apiService.getData(this.$http, 'category')
         this.dataKategori = result.data.data
       },
+
       statusShow (item) {
         if (item === null) {
           return 'Di Jual'
@@ -673,6 +684,7 @@
 
         return 'Pulihkan'
       },
+
       formatExample (value) {
         const val = (value / 1).toFixed(2).replace('.', ',')
         return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')

@@ -249,6 +249,7 @@
           default : return '100%'
         }
       },
+
       widthDialog () {
         switch (this.$vuetify.breakpoint.name) {
           case 'xs': return '100%'
@@ -275,6 +276,7 @@
         this.action = action
         this.dialog = true
       },
+
       dialogClose () {
         this.dialog = false
         Object.keys(this.form).forEach(key => {
@@ -284,12 +286,14 @@
         this.$refs.form.resetValidation()
         this.loadingButton = false
       },
+
       alert (status, message) {
         this.color = status === 'success' ? 'success' : 'error'
         this.title = status
         this.subtitle = message
         this.snackbar = true
       },
+
       async setForm () {
         let result
 
@@ -320,6 +324,7 @@
           this.dialogClose()
         }
       },
+
       async read () {
         this.progressLoading = true
         const result = await this.apiService.getData(this.$http, 'city')

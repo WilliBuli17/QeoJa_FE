@@ -355,6 +355,7 @@
           default : return '100%'
         }
       },
+
       fotoPreview () {
         if (this.selectedFile === null && this.action === 'Ubah') {
           return this.images + this.srcImage
@@ -380,6 +381,7 @@
         this.action = action
         this.dialog = true
       },
+
       dialogClose () {
         this.dialog = false
         Object.keys(this.form).forEach(key => {
@@ -392,12 +394,14 @@
         this.selectedFile = null
         this.srcImage = null
       },
+
       alert (status, message) {
         this.color = status === 'success' ? 'success' : 'error'
         this.title = status
         this.subtitle = message
         this.snackbar = true
       },
+
       onButtonClick () {
         this.isSelecting = true
         window.addEventListener('focus', () => {
@@ -405,9 +409,11 @@
         }, { once: true })
         this.$refs.uploader.click()
       },
+
       onFileChanged (e) {
         this.selectedFile = e.target.files[0]
       },
+
       async setForm () {
         let result
 
@@ -439,6 +445,7 @@
           this.dialogClose()
         }
       },
+
       async read () {
         this.progressLoading = true
         const result = await this.apiService.getData(this.$http, 'expeditionTruck')
