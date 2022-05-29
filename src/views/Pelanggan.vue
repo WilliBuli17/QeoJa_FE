@@ -1,15 +1,15 @@
 <template>
   <v-container
-    id="  truk-ekspedisi-view"
+    id="pelanggan-view"
     fluid
     tag="section"
   >
     <v-row>
       <v-col cols="12">
         <material-card
-          icon="mdi-truck-cargo-container"
+          icon="mdi-account"
           icon-small
-          title="Truk Ekspedisi"
+          title="Pelanggan"
           color="primary"
         >
           <v-row>
@@ -21,24 +21,6 @@
             >
               <app-search v-model="search" />
             </v-col>
-
-            <v-col
-              class="px-7 text-right"
-              cols="12"
-              sm="12"
-              md="6"
-              lg="6"
-            >
-              <app-btn
-                medium
-                :class="$vuetify.breakpoint.mdAndUp ? 'mt-4' : 'mt-n10'"
-                rel="noopener noreferrer"
-                :width="width"
-                @click="dialogOpen('Tambah', null)"
-              >
-                <span>Tambah Data</span>
-              </app-btn>
-            </v-col>
           </v-row>
 
           <div v-if="progressLoading">
@@ -48,11 +30,11 @@
           <v-data-table
             v-else
             :headers="headers"
-            :items="dataTrukEkspedisi"
+            :items="dataPelanggan"
             :search="search"
           >
             <template v-slot:[`item.index`]="{ item }">
-              {{ dataTrukEkspedisi.indexOf(item) + 1 }}
+              {{ dataPelanggan.indexOf(item) + 1 }}
             </template>
 
             <template v-slot:[`item.avatar`]="{ item }">
@@ -68,10 +50,10 @@
             <template v-slot:[`item.status`]="{ item }">
               <v-chip
                 class="ma-2"
-                :color="item.status === 'available' ? 'light-blue darken-3' : 'red accent-3'"
+                :color="item.deleted_at === null ? 'light-blue darken-3' : 'red accent-3'"
                 text-color="white"
               >
-                {{ statusShow(item.status) }}
+                {{ statusShow('Normal', item.deleted_at) }}
               </v-chip>
             </template>
 
@@ -81,25 +63,31 @@
                 elevation="5"
                 class="ma-2 green accent-4"
                 rel="noopener noreferrer"
-                @click="dialogOpen('Ubah', item)"
+                @click="dialogOpen('Detail', item)"
               >
                 <v-icon left>
-                  mdi-pencil-outline
+                  mdi-open-in-new
                 </v-icon>
-                <span>Ubah</span>
+                <span>Detail</span>
               </app-btn>
 
               <app-btn
                 small
                 elevation="5"
-                class="ma-2 red accent-3"
+                :color="item.deleted_at === null ? 'red accent-3' : 'light-blue darken-3'"
+                class="ma-2 white--text"
                 rel="noopener noreferrer"
                 @click="dialogOpen('Hapus', item)"
               >
-                <v-icon left>
-                  mdi-delete-variant
+                <v-icon
+                  left
+                >
+                  {{ item.deleted_at === null ? 'mdi-account-lock-outline' : 'mdi-account-reactivate' }}
                 </v-icon>
-                <span>Hapus</span>
+
+                <span>
+                  {{ statusShow('Reverse', item.deleted_at) }}kan
+                </span>
               </app-btn>
             </template>
           </v-data-table>
@@ -110,7 +98,7 @@
     <v-dialog
       v-model="dialog"
       persistent
-      :width="width"
+      :width="action === 'Hapus'? widthBtn : widthDialog"
     >
       <v-card>
         <material-card
@@ -120,7 +108,7 @@
           <template #heading>
             <div class="pt-3 pb-2 px-3 white--text">
               <div class="text-h3 font-weight-normal">
-                {{ action }} Truk Ekspedisi
+                {{ action === 'Hapus'? `${statusShow('Reverse', form.status)}kan` : action }} Pelanggan
               </div>
             </div>
           </template>
@@ -132,7 +120,7 @@
             <v-card-text
               v-if="action === 'Hapus'"
             >
-              Apakah Anda Yakin Ingin Menghapus Data Truk Ekspedisi {{ form.licenseId }}?
+              Apakah Anda Yakin Ingin {{ statusShow('Reverse', form.status) }}kan Data Pelanggan {{ form.name }}?
             </v-card-text>
 
             <v-card-text
@@ -143,7 +131,7 @@
                 class="mb-2"
               >
                 <v-avatar
-                  v-if="selectedFile != null || form.picture != null"
+                  v-if="form.picture != null"
                   size="250"
                 >
                   <v-img
@@ -156,59 +144,51 @@
                 justify="center"
                 class="mb-5"
               >
-                <app-btn
-                  small
-                  rel="noopener noreferrer"
-                  width="auto"
-                  :loading="isSelecting"
-                  @click="onButtonClick"
-                >
-                  <v-icon left>
-                    mdi-image-edit-outline
-                  </v-icon>
-                  <span>Upload Foto Truk Ekspedisi</span>
-                </app-btn>
-
-                <input
-                  ref="uploader"
-                  class="d-none"
-                  type="file"
-                  accept="image/*"
-                  @change="onFileChanged"
-                >
-              </v-row>
-
-              <v-row
-                v-if="action === 'Ubah'"
-                justify="center"
-                class="mb-5"
-              >
                 <v-chip
                   class="ma-2"
-                  :color="form.status === 'available' ? 'light-blue darken-3' : 'red accent-3'"
+                  :color="form.status === null ? 'light-blue darken-3' : 'red accent-3'"
                   text-color="white"
                 >
-                  Truk Ekspedisi {{ statusShow(form.status) }}
+                  Pelanggan {{ statusShow('Normal', form.status) }}
                 </v-chip>
               </v-row>
 
-              <app-text-input
-                v-model="form.licenseId"
-                :rules="licenseIdRules"
-                label="No. Plat"
-              />
+              <v-row>
+                <v-col
+                  cols="12"
+                >
+                  <app-text-input
+                    v-model="form.name"
+                    label="Nama"
+                  />
+                </v-col>
+              </v-row>
 
-              <app-text-input
-                v-model="form.minVolume"
-                :rules="minVolumeRules"
-                label="Min. Volume"
-              />
+              <v-row>
+                <v-col
+                  cols="12"
+                  sm="6"
+                  md="6"
+                  lg="6"
+                >
+                  <app-text-input
+                    v-model="form.email"
+                    label="Email"
+                  />
+                </v-col>
 
-              <app-text-input
-                v-model="form.maxVolume"
-                :rules="maxVolumeRules"
-                label="Maks. Volume"
-              />
+                <v-col
+                  cols="12"
+                  sm="6"
+                  md="6"
+                  lg="6"
+                >
+                  <app-text-input
+                    v-model="form.phone"
+                    label="No. Telp"
+                  />
+                </v-col>
+              </v-row>
             </v-card-text>
 
             <v-divider />
@@ -225,12 +205,13 @@
               </v-btn>
 
               <v-btn
+                v-if="action === 'Hapus'"
                 color="secondary"
                 text
                 :loading="loadingButton"
                 @click="setForm"
               >
-                {{ action }}
+                {{ `${statusShow('Reverse', form.status)}kan` }}
               </v-btn>
             </v-card-actions>
           </v-form>
@@ -252,34 +233,20 @@
   import ApiService from '../service/ApiService'
 
   export default {
-    name: 'TrukEkspedisiView',
+    name: 'PelangganView',
 
     data: () => ({
       dialog: false,
       action: null,
       form: {
         id: null,
-        licenseId: null,
-        minVolume: null,
-        maxVolume: null,
-        status: null,
+        email: null,
+        name: null,
+        phone: null,
         picture: null,
+        verified: null,
+        status: null,
       },
-      licenseIdRules: [
-        v => !!v || 'No. Plat Harus Diisi',
-      ],
-      minVolumeRules: [
-        v => !!v || 'Minimal Volume Harus Diisi',
-        v => (v && v > 0) || 'Minimal Volume Tidak Boleh Lebih Kecil Dari 0',
-        (v) => !v || /^[1-9]\d*$/.test(v) || 'Format Minimal Volume  Tidak Valid',
-      ],
-      maxVolumeRules: [
-        v => !!v || 'Maksimal Volume Harus Diisi',
-        (v) => !v || /^[1-9]\d*$/.test(v) || 'Format Maksimal Volume  Tidak Valid',
-      ],
-      dateInput: false,
-      selectedFile: null,
-      isSelecting: false,
       apiService: new ApiService(),
       color: null,
       title: null,
@@ -302,22 +269,22 @@
           class: 'primary--text',
         },
         {
-          text: 'No. Plat',
-          value: 'license_id',
+          text: 'Nama',
+          value: 'name',
           align: 'start',
           sortable: true,
           class: 'primary--text',
         },
         {
-          text: 'Min. Volume',
-          value: 'min_volume',
+          text: 'Email',
+          value: 'email',
           align: 'start',
           sortable: true,
           class: 'primary--text',
         },
         {
-          text: 'Maks. Volume',
-          value: 'max_volume',
+          text: 'Phone',
+          value: 'phone',
           align: 'start',
           sortable: true,
           class: 'primary--text',
@@ -337,20 +304,31 @@
           class: 'primary--text',
         },
       ],
-      dataTrukEkspedisi: [],
+      dataPelanggan: [],
       search: null,
       progressLoading: false,
       loadingButton: false,
     }),
 
     computed: {
-      width () {
+      widthBtn () {
         switch (this.$vuetify.breakpoint.name) {
           case 'xs': return '100%'
           case 'sm': return '100%'
           case 'md': return '40%'
           case 'lg': return '25%'
           case 'xl': return '15%'
+          default : return '100%'
+        }
+      },
+
+      widthDialog () {
+        switch (this.$vuetify.breakpoint.name) {
+          case 'xs': return '100%'
+          case 'sm': return '90%'
+          case 'md': return '80%'
+          case 'lg': return '60%'
+          case 'xl': return '40%'
           default : return '100%'
         }
       },
@@ -362,14 +340,13 @@
 
     methods: {
       dialogOpen (action, item) {
-        if (action === 'Ubah' || action === 'Hapus') {
-          this.form.id = item.id
-          this.form.licenseId = item.license_id
-          this.form.minVolume = item.min_volume
-          this.form.maxVolume = item.max_volume
-          this.form.picture = item.picture
-          this.form.status = item.deleted_at
-        }
+        this.form.id = item.id
+        this.form.name = item.name
+        this.form.email = item.email
+        this.form.phone = item.phone
+        this.form.picture = item.picture
+        this.form.verified = item.email_verified_at
+        this.form.status = item.deleted_at
         this.action = action
         this.dialog = true
       },
@@ -382,7 +359,6 @@
         this.$refs.form.reset()
         this.$refs.form.resetValidation()
         this.loadingButton = false
-        this.selectedFile = null
       },
 
       alert (status, message) {
@@ -392,68 +368,32 @@
         this.snackbar = true
       },
 
-      onButtonClick () {
-        this.isSelecting = true
-        window.addEventListener('focus', () => {
-          this.isSelecting = false
-        }, { once: true })
-        this.$refs.uploader.click()
-      },
-
-      onFileChanged (e) {
-        this.selectedFile = e.target.files[0]
-      },
-
       async setForm () {
-        let result
-
-        if (this.action === 'Hapus') {
-          this.loadingButton = true
-          result = await this.apiService.deleteData(this.$http, `expeditionTruck/${this.form.id}`)
-
-          this.alert(result.data.status, result.data.message)
-          this.read()
-          this.dialogClose()
-        } else if (this.$refs.form.validate()) {
-          this.loadingButton = true
-          const expeditionTruck = new FormData()
-          expeditionTruck.append('license_id', this.form.licenseId)
-          expeditionTruck.append('min_volume', this.form.minVolume)
-          expeditionTruck.append('max_volume', this.form.maxVolume)
-          if (this.selectedFile != null) {
-            expeditionTruck.append('picture', this.selectedFile)
-          }
-
-          if (this.action === 'Tambah') {
-            result = await this.apiService.storeData(this.$http, 'expeditionTruck', expeditionTruck)
-          } else if (this.action === 'Ubah') {
-            result = await this.apiService.storeData(this.$http, `expeditionTruck/${this.form.id}`, expeditionTruck)
-          }
-
-          this.alert(result.data.status, result.data.message)
-          this.read()
-          this.dialogClose()
-        }
+        this.loadingButton = true
+        const result = await this.apiService.deleteData(this.$http, `customer/${this.form.id}`)
+        this.alert(result.data.status, result.data.message)
+        this.read()
+        this.dialogClose()
       },
 
       async read () {
         this.progressLoading = true
-        const result = await this.apiService.getData(this.$http, 'expeditionTruck')
-        this.dataTrukEkspedisi = result.data.data
+        const result = await this.apiService.getData(this.$http, 'customer')
+        this.dataPelanggan = result.data.data
         this.progressLoading = false
         this.alert(result.data.status, result.data.message)
       },
 
       fotoPreview (source) {
-        if (this.selectedFile === null) {
-          return this.$file + source
-        }
-
-        return URL.createObjectURL(this.selectedFile)
+        return this.$file + source
       },
 
-      statusShow (item) {
-        return item === 'available' ? 'Aktif' : 'Non-Aktif'
+      statusShow (action, item) {
+        if (action === 'Normal') {
+          return item ? 'Non-Aktif' : 'Aktif'
+        } else {
+          return item ? 'Aktif' : 'Non-Aktif'
+        }
       },
     },
   }

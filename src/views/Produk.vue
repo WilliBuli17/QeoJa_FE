@@ -76,7 +76,7 @@
                 size="45"
               >
                 <v-img
-                  :src="images + item.picture"
+                  :src="fotoPreview(item.picture)"
                 />
               </v-avatar>
             </template>
@@ -85,13 +85,13 @@
               Rp. {{ formatExample(item.price) }}
             </template>
 
-            <template v-slot:[`item.deleted_at`]="{ item }">
+            <template v-slot:[`item.status`]="{ item }">
               <v-chip
                 class="ma-2"
                 :color="item.deleted_at === null ? 'light-blue darken-3' : 'red accent-3'"
                 text-color="white"
               >
-                {{ statusShow(item.deleted_at) }}
+                {{ statusShow('Normal', item.deleted_at) }}
               </v-chip>
             </template>
 
@@ -118,21 +118,13 @@
                 @click="dialogOpen('Hapus', item)"
               >
                 <v-icon
-                  v-if="item.deleted_at === null"
                   left
                 >
-                  mdi-archive-cancel-outline
-                </v-icon>
-
-                <v-icon
-                  v-else
-                  left
-                >
-                  mdi-archive-refresh-outline
+                  {{ item.deleted_at === null ? 'mdi-archive-cancel-outline' : 'mdi-refresh-outline' }}
                 </v-icon>
 
                 <span>
-                  {{ statusShowReverse(item.deleted_at) }}
+                  {{ statusShow('Reverse', item.deleted_at) }}
                 </span>
               </app-btn>
             </template>
@@ -154,7 +146,7 @@
           <template #heading>
             <div class="pt-3 pb-2 px-3 white--text">
               <div class="text-h3 font-weight-normal">
-                {{ action }} Produk
+                {{ action === 'Hapus'? statusShow('Reverse', form.status) : action }} Produk
               </div>
             </div>
           </template>
@@ -166,7 +158,7 @@
             <v-card-text
               v-if="action === 'Hapus'"
             >
-              Apakah Anda Yakin Ingin {{ statusShowReverse(status) }} Data Produk {{ form.name }}?
+              Apakah Anda Yakin Ingin {{ statusShow('Reverse', form.status) }} Data Produk {{ form.name }}?
             </v-card-text>
 
             <v-card-text
@@ -177,11 +169,11 @@
                 class="mb-2"
               >
                 <v-avatar
-                  v-if="selectedFile != null || srcImage != null"
+                  v-if="selectedFile != null || form.picture != null"
                   size="250"
                 >
                   <v-img
-                    :src="fotoPreview"
+                    :src="fotoPreview(form.picture)"
                   />
                 </v-avatar>
               </v-row>
@@ -219,10 +211,10 @@
               >
                 <v-chip
                   class="ma-2"
-                  :color="status === null ? 'light-blue darken-3' : 'red accent-3'"
+                  :color="form.status === null ? 'light-blue darken-3' : 'red accent-3'"
                   text-color="white"
                 >
-                  Produk {{ statusShow(status) }}
+                  Produk {{ statusShow('Normal', form.status) }}
                 </v-chip>
               </v-row>
 
@@ -366,7 +358,7 @@
                 :loading="loadingButton"
                 @click="setForm"
               >
-                {{ statusShowReverse(status) }}
+                {{ action === 'Hapus'? statusShow('Reverse', form.status) : action }}
               </v-btn>
             </v-card-actions>
           </v-form>
@@ -408,6 +400,7 @@
       dialog: false,
       action: null,
       form: {
+        id: null,
         name: null,
         description: null,
         unit: null,
@@ -416,6 +409,8 @@
         stockQuantity: null,
         categoryId: null,
         suplierId: null,
+        status: null,
+        picture: null,
       },
       nameRules: [
         v => !!v || 'Nama Harus Diisi',
@@ -446,7 +441,6 @@
       dateInput: false,
       selectedFile: null,
       isSelecting: false,
-      srcImage: null,
       apiService: new ApiService(),
       color: null,
       title: null,
@@ -505,7 +499,7 @@
         },
         {
           text: 'Status',
-          value: 'deleted_at',
+          value: 'status',
           align: 'start',
           sortable: true,
           class: 'primary--text',
@@ -519,10 +513,7 @@
         },
       ],
       dataProduk: [],
-      images: null,
       search: null,
-      editDeleteID: null,
-      status: null,
       progressLoading: false,
       loadingButton: false,
     }),
@@ -549,17 +540,9 @@
           default : return '100%'
         }
       },
-
-      fotoPreview () {
-        if (this.selectedFile === null && this.action === 'Ubah') {
-          return this.images + this.srcImage
-        }
-        return URL.createObjectURL(this.selectedFile)
-      },
     },
 
     mounted () {
-      this.images = this.$file
       this.read()
       this.readSupplier()
       this.readKategori()
@@ -568,7 +551,7 @@
     methods: {
       dialogOpen (action, item) {
         if (action === 'Ubah' || action === 'Hapus') {
-          this.editDeleteID = item.id
+          this.form.id = item.id
           this.form.name = item.name
           this.form.description = item.description
           this.form.unit = item.unit
@@ -577,8 +560,8 @@
           this.form.stockQuantity = item.stock_quantity
           this.form.categoryId = item.category_id
           this.form.suplierId = item.suplier_id
-          this.srcImage = item.picture
-          this.status = item.deleted_at
+          this.form.picture = item.picture
+          this.form.status = item.deleted_at
         }
         this.action = action
         this.dialog = true
@@ -592,9 +575,7 @@
         this.$refs.form.reset()
         this.$refs.form.resetValidation()
         this.loadingButton = false
-        this.editDeleteID = null
         this.selectedFile = null
-        this.srcImage = null
       },
 
       alert (status, message) {
@@ -621,7 +602,7 @@
 
         if (this.action === 'Hapus') {
           this.loadingButton = true
-          result = await this.apiService.deleteData(this.$http, `product/${this.editDeleteID}`)
+          result = await this.apiService.deleteData(this.$http, `product/${this.form.id}`)
 
           this.alert(result.data.status, result.data.message)
           this.read()
@@ -643,7 +624,7 @@
           if (this.action === 'Tambah') {
             result = await this.apiService.storeData(this.$http, 'product', product)
           } else if (this.action === 'Ubah') {
-            result = await this.apiService.storeData(this.$http, `product/${this.editDeleteID}`, product)
+            result = await this.apiService.storeData(this.$http, `product/${this.form.id}`, product)
           }
 
           this.alert(result.data.status, result.data.message)
@@ -670,19 +651,20 @@
         this.dataKategori = result.data.data
       },
 
-      statusShow (item) {
-        if (item === null) {
-          return 'Di Jual'
+      fotoPreview (source) {
+        if (this.selectedFile === null) {
+          return this.$file + source
         }
 
-        return 'Di Arsip'
+        return URL.createObjectURL(this.selectedFile)
       },
-      statusShowReverse (item) {
-        if (item === null) {
-          return 'Arsipkan'
-        }
 
-        return 'Pulihkan'
+      statusShow (action, item) {
+        if (action === 'Normal') {
+          return item ? 'Di Arsip' : 'Di Jual'
+        } else {
+          return item ? 'Pulihkan' : 'Arsipkan'
+        }
       },
 
       formatExample (value) {

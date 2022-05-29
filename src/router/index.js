@@ -31,6 +31,7 @@ const router = new Router({
       route('Bank', null, 'bank'),
       route('Transaksi Pelanggan', null, 'transaksi-pelanggan'),
       route('Status Transaksi', null, 'status-transaksi'),
+      route('Pelanggan', null, 'pelanggan'),
       // route('Error', null, '*'),
 
       // Pages

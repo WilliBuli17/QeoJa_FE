@@ -112,15 +112,15 @@
             <v-card-text
               v-if="action === 'Hapus'"
             >
-              Apakah Anda Yakin Ingin Menghapus Data Role {{ namaRole }}?
+              Apakah Anda Yakin Ingin Menghapus Data Role {{ form.name }}?
             </v-card-text>
 
             <v-card-text
               v-else
             >
               <app-text-input
-                v-model="namaRole"
-                :rules="namaRoleRules"
+                v-model="form.name"
+                :rules="nameRules"
                 label="Nama"
               />
             </v-card-text>
@@ -171,8 +171,11 @@
     data: () => ({
       dialog: false,
       action: null,
-      namaRole: null,
-      namaRoleRules: [
+      form: {
+        id: null,
+        name: null,
+      },
+      nameRules: [
         v => !!v || 'Nama Harus Diisi',
         v => (v && v.length <= 100) || 'Nama Tidak Boleh Lebih Dari 100 Karakter',
       ],
@@ -207,7 +210,6 @@
       ],
       dataRole: [],
       search: null,
-      editDeleteID: null,
       progressLoading: false,
       loadingButton: false,
     }),
@@ -243,8 +245,8 @@
     methods: {
       dialogOpen (action, item) {
         if (action === 'Ubah' || action === 'Hapus') {
-          this.editDeleteID = item.id
-          this.namaRole = item.name
+          this.form.id = item.id
+          this.form.name = item.name
         }
         this.action = action
         this.dialog = true
@@ -252,7 +254,9 @@
 
       dialogClose () {
         this.dialog = false
-        this.namaRole = null
+        Object.keys(this.form).forEach(key => {
+          this.form[key] = null
+        })
         this.$refs.form.reset()
         this.$refs.form.resetValidation()
         this.loadingButton = false
@@ -270,7 +274,7 @@
 
         if (this.action === 'Hapus') {
           this.loadingButton = true
-          result = await this.apiService.deleteData(this.$http, `role/${this.editDeleteID}`)
+          result = await this.apiService.deleteData(this.$http, `role/${this.form.id}`)
 
           this.alert(result.data.status, result.data.message)
           this.read()
@@ -279,13 +283,13 @@
           this.loadingButton = true
           if (this.action === 'Tambah') {
             const role = new FormData()
-            role.append('name', this.namaRole)
+            role.append('name', this.form.name)
             result = await this.apiService.storeData(this.$http, 'role', role)
           } else if (this.action === 'Ubah') {
             const newData = {
-              name: this.namaRole,
+              name: this.form.name,
             }
-            result = await this.apiService.updateData(this.$http, `role/${this.editDeleteID}`, newData)
+            result = await this.apiService.updateData(this.$http, `role/${this.form.id}`, newData)
           }
 
           this.alert(result.data.status, result.data.message)

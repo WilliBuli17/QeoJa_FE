@@ -184,6 +184,7 @@
       dialog: false,
       action: null,
       form: {
+        id: null,
         bankName: null,
         accountName: null,
         accountNumber: null,
@@ -245,7 +246,6 @@
       ],
       dataBank: [],
       search: null,
-      editDeleteID: null,
       progressLoading: false,
       loadingButton: false,
     }),
@@ -281,7 +281,7 @@
     methods: {
       dialogOpen (action, item) {
         if (action === 'Ubah' || action === 'Hapus') {
-          this.editDeleteID = item.id
+          this.form.id = item.id
           this.form.bankName = item.bank_name
           this.form.accountName = item.account_name
           this.form.accountNumber = item.account_number
@@ -312,7 +312,7 @@
 
         if (this.action === 'Hapus') {
           this.loadingButton = true
-          result = await this.apiService.deleteData(this.$http, `bankPayment/${this.editDeleteID}`)
+          result = await this.apiService.deleteData(this.$http, `bankPayment/${this.form.id}`)
 
           this.alert(result.data.status, result.data.message)
           this.read()
@@ -331,7 +331,7 @@
               account_name: this.form.accountName,
               account_number: this.form.accountNumber,
             }
-            result = await this.apiService.updateData(this.$http, `bankPayment/${this.editDeleteID}`, newData)
+            result = await this.apiService.updateData(this.$http, `bankPayment/${this.form.id}`, newData)
           }
 
           this.alert(result.data.status, result.data.message)

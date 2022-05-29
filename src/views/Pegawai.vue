@@ -74,18 +74,18 @@
                 size="45"
               >
                 <v-img
-                  :src="images + item.picture"
+                  :src="fotoPreview(item.picture)"
                 />
               </v-avatar>
             </template>
 
-            <template v-slot:[`item.deleted_at`]="{ item }">
+            <template v-slot:[`item.status`]="{ item }">
               <v-chip
                 class="ma-2"
                 :color="item.deleted_at === null ? 'light-blue darken-3' : 'red accent-3'"
                 text-color="white"
               >
-                {{ statusShow(item.deleted_at) }}
+                {{ statusShow('Normal', item.deleted_at) }}
               </v-chip>
             </template>
 
@@ -112,21 +112,13 @@
                 @click="dialogOpen('Hapus', item)"
               >
                 <v-icon
-                  v-if="item.deleted_at === null"
                   left
                 >
-                  mdi-account-lock-outline
-                </v-icon>
-
-                <v-icon
-                  v-else
-                  left
-                >
-                  mdi-account-reactivate
+                  {{ item.deleted_at === null ? 'mdi-account-lock-outline' : 'mdi-account-reactivate' }}
                 </v-icon>
 
                 <span>
-                  {{ statusShowReverse(item.deleted_at) }}kan
+                  {{ statusShow('Reverse', item.deleted_at) }}kan
                 </span>
               </app-btn>
             </template>
@@ -148,7 +140,7 @@
           <template #heading>
             <div class="pt-3 pb-2 px-3 white--text">
               <div class="text-h3 font-weight-normal">
-                {{ action }} Pegawai
+                {{ action === 'Hapus'? `${statusShow('Reverse', form.status)}kan` : action }} Pegawai
               </div>
             </div>
           </template>
@@ -160,7 +152,7 @@
             <v-card-text
               v-if="action === 'Hapus'"
             >
-              Apakah Anda Yakin Ingin {{ statusShowReverse(status) }}kan Data Pegawai {{ form.name }}?
+              Apakah Anda Yakin Ingin {{ statusShow('Reverse', form.status) }}kan Data Pegawai {{ form.name }}?
             </v-card-text>
 
             <v-card-text
@@ -171,11 +163,11 @@
                 class="mb-2"
               >
                 <v-avatar
-                  v-if="selectedFile != null || srcImage != null"
+                  v-if="selectedFile != null || form.picture != null"
                   size="250"
                 >
                   <v-img
-                    :src="fotoPreview"
+                    :src="fotoPreview(form.picture)"
                   />
                 </v-avatar>
               </v-row>
@@ -213,10 +205,10 @@
               >
                 <v-chip
                   class="ma-2"
-                  :color="status === null ? 'light-blue darken-3' : 'red accent-3'"
+                  :color="form.status === null ? 'light-blue darken-3' : 'red accent-3'"
                   text-color="white"
                 >
-                  Pegawai {{ statusShow(status) }}
+                  Pegawai {{ statusShow('Normal', form.status) }}
                 </v-chip>
               </v-row>
 
@@ -368,7 +360,7 @@
                 :loading="loadingButton"
                 @click="setForm"
               >
-                {{ statusShowReverse(status) }}kan
+                {{ action === 'Hapus'? `${statusShow('Reverse', form.status)}kan` : action }}
               </v-btn>
             </v-card-actions>
           </v-form>
@@ -396,6 +388,7 @@
       dialog: false,
       action: null,
       form: {
+        id: null,
         email: null,
         name: null,
         gander: null,
@@ -403,6 +396,8 @@
         address: null,
         dateJoin: null,
         roleId: null,
+        status: null,
+        picture: null,
       },
       emailRules: [
         v => !!v || 'Email Harus Diisi',
@@ -442,7 +437,6 @@
       dateInput: false,
       selectedFile: null,
       isSelecting: false,
-      srcImage: null,
       apiService: new ApiService(),
       color: null,
       title: null,
@@ -494,7 +488,7 @@
         },
         {
           text: 'Status',
-          value: 'deleted_at',
+          value: 'status',
           align: 'start',
           sortable: true,
           class: 'primary--text',
@@ -508,10 +502,7 @@
         },
       ],
       dataPegawai: [],
-      images: null,
       search: null,
-      editDeleteID: null,
-      status: null,
       progressLoading: false,
       loadingButton: false,
     }),
@@ -538,17 +529,9 @@
           default : return '100%'
         }
       },
-
-      fotoPreview () {
-        if (this.selectedFile === null && this.action === 'Ubah') {
-          return this.images + this.srcImage
-        }
-        return URL.createObjectURL(this.selectedFile)
-      },
     },
 
     mounted () {
-      this.images = this.$file
       this.read()
       this.readRole()
     },
@@ -556,7 +539,7 @@
     methods: {
       dialogOpen (action, item) {
         if (action === 'Ubah' || action === 'Hapus') {
-          this.editDeleteID = item.id
+          this.form.id = item.id
           this.form.email = item.email
           this.form.name = item.name
           this.form.gander = item.gander
@@ -564,8 +547,8 @@
           this.form.address = item.address
           this.form.dateJoin = item.date_join
           this.form.roleId = item.role_id
-          this.srcImage = item.picture
-          this.status = item.deleted_at
+          this.form.picture = item.picture
+          this.form.status = item.deleted_at
         }
         this.action = action
         this.dialog = true
@@ -579,9 +562,7 @@
         this.$refs.form.reset()
         this.$refs.form.resetValidation()
         this.loadingButton = false
-        this.editDeleteID = null
         this.selectedFile = null
-        this.srcImage = null
       },
 
       alert (status, message) {
@@ -608,7 +589,7 @@
 
         if (this.action === 'Hapus') {
           this.loadingButton = true
-          result = await this.apiService.deleteData(this.$http, `employee/${this.editDeleteID}`)
+          result = await this.apiService.deleteData(this.$http, `employee/${this.form.id}`)
 
           this.alert(result.data.status, result.data.message)
           this.read()
@@ -630,7 +611,7 @@
           if (this.action === 'Tambah') {
             result = await this.apiService.storeData(this.$http, 'employee', employee)
           } else if (this.action === 'Ubah') {
-            result = await this.apiService.storeData(this.$http, `employee/${this.editDeleteID}`, employee)
+            result = await this.apiService.storeData(this.$http, `employee/${this.form.id}`, employee)
           }
 
           this.alert(result.data.status, result.data.message)
@@ -652,20 +633,20 @@
         this.dataRole = result.data.data
       },
 
-      statusShow (item) {
-        if (item === null) {
-          return 'Aktif'
+      fotoPreview (source) {
+        if (this.selectedFile === null) {
+          return this.$file + source
         }
 
-        return 'Non-Aktif'
+        return URL.createObjectURL(this.selectedFile)
       },
 
-      statusShowReverse (item) {
-        if (item === null) {
-          return 'Non-Aktif'
+      statusShow (action, item) {
+        if (action === 'Normal') {
+          return item ? 'Non-Aktif' : 'Aktif'
+        } else {
+          return item ? 'Aktif' : 'Non-Aktif'
         }
-
-        return 'Aktif'
       },
     },
   }

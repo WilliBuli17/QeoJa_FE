@@ -183,6 +183,7 @@
       dialog: false,
       action: null,
       form: {
+        id: null,
         name: null,
         expeditionCost: null,
       },
@@ -233,7 +234,6 @@
       ],
       dataKota: [],
       search: null,
-      editDeleteID: null,
       progressLoading: false,
       loadingButton: false,
     }),
@@ -269,7 +269,7 @@
     methods: {
       dialogOpen (action, item) {
         if (action === 'Ubah' || action === 'Hapus') {
-          this.editDeleteID = item.id
+          this.form.id = item.id
           this.form.name = item.name
           this.form.expeditionCost = item.expedition_cost
         }
@@ -299,7 +299,7 @@
 
         if (this.action === 'Hapus') {
           this.loadingButton = true
-          result = await this.apiService.deleteData(this.$http, `city/${this.editDeleteID}`)
+          result = await this.apiService.deleteData(this.$http, `city/${this.form.id}`)
 
           this.alert(result.data.status, result.data.message)
           this.read()
@@ -316,7 +316,7 @@
               name: this.form.name,
               expedition_cost: this.form.expeditionCost,
             }
-            result = await this.apiService.updateData(this.$http, `city/${this.editDeleteID}`, newData)
+            result = await this.apiService.updateData(this.$http, `city/${this.form.id}`, newData)
           }
 
           this.alert(result.data.status, result.data.message)
@@ -332,6 +332,7 @@
         this.progressLoading = false
         this.alert(result.data.status, result.data.message)
       },
+
       formatExample (value) {
         const val = (value / 1).toFixed(2).replace('.', ',')
         return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')

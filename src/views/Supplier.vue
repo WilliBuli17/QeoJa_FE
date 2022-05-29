@@ -112,15 +112,15 @@
             <v-card-text
               v-if="action === 'Hapus'"
             >
-              Apakah Anda Yakin Ingin Menghapus Data Supplier {{ namaSupplier }}?
+              Apakah Anda Yakin Ingin Menghapus Data Supplier {{ form.name }}?
             </v-card-text>
 
             <v-card-text
               v-else
             >
               <app-text-input
-                v-model="namaSupplier"
-                :rules="namaSupplierRules"
+                v-model="form.name"
+                :rules="nameRules"
                 label="Nama"
               />
             </v-card-text>
@@ -171,8 +171,11 @@
     data: () => ({
       dialog: false,
       action: null,
-      namaSupplier: null,
-      namaSupplierRules: [
+      form: {
+        id: null,
+        name: null,
+      },
+      nameRules: [
         v => !!v || 'Nama Harus Diisi',
         v => (v && v.length <= 100) || 'Nama Tidak Boleh Lebih Dari 100 Karakter',
       ],
@@ -207,7 +210,6 @@
       ],
       dataSupplier: [],
       search: null,
-      editDeleteID: null,
       progressLoading: false,
       loadingButton: false,
     }),
@@ -242,8 +244,8 @@
     methods: {
       dialogOpen (action, item) {
         if (action === 'Ubah' || action === 'Hapus') {
-          this.editDeleteID = item.id
-          this.namaSupplier = item.name
+          this.form.id = item.id
+          this.form.name = item.name
         }
         this.action = action
         this.dialog = true
@@ -251,7 +253,9 @@
 
       dialogClose () {
         this.dialog = false
-        this.namaSupplier = null
+        Object.keys(this.form).forEach(key => {
+          this.form[key] = null
+        })
         this.$refs.form.reset()
         this.$refs.form.resetValidation()
         this.loadingButton = false
@@ -269,7 +273,7 @@
 
         if (this.action === 'Hapus') {
           this.loadingButton = true
-          result = await this.apiService.deleteData(this.$http, `supplier/${this.editDeleteID}`)
+          result = await this.apiService.deleteData(this.$http, `supplier/${this.form.id}`)
 
           this.alert(result.data.status, result.data.message)
           this.read()
@@ -278,13 +282,13 @@
           this.loadingButton = true
           if (this.action === 'Tambah') {
             const supplier = new FormData()
-            supplier.append('name', this.namaSupplier)
+            supplier.append('name', this.form.name)
             result = await this.apiService.storeData(this.$http, 'supplier', supplier)
           } else if (this.action === 'Ubah') {
             const newData = {
-              name: this.namaSupplier,
+              name: this.form.name,
             }
-            result = await this.apiService.updateData(this.$http, `supplier/${this.editDeleteID}`, newData)
+            result = await this.apiService.updateData(this.$http, `supplier/${this.form.id}`, newData)
           }
 
           this.alert(result.data.status, result.data.message)

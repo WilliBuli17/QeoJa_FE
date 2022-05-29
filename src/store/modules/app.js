@@ -20,7 +20,7 @@ const state = {
     {
       title: 'Pelanggan',
       icon: 'mdi-account',
-      // to: '/components/profile/',
+      to: '/pelanggan/',
     },
     {
       title: 'Produk',
