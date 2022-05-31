@@ -1,14 +1,18 @@
 <template>
   <v-app>
-    <default-bar />
+    <default-login v-if="loginView" />
 
-    <default-drawer />
+    <div v-else>
+      <default-bar />
 
-    <default-view />
+      <default-drawer />
 
-    <default-footer />
+      <default-view />
 
-    <default-settings />
+      <default-footer />
+
+      <default-settings />
+    </div>
   </v-app>
 </template>
 
@@ -37,6 +41,19 @@
         /* webpackChunkName: "default-view" */
         './View'
       ),
+      DefaultLogin: () => import(
+        /* webpackChunkName: "default-login" */
+        '../../views/Login.vue'
+      ),
+    },
+
+    computed: {
+      loginView () {
+        if (this.$route.path === '/login/') {
+          return true
+        }
+        return false
+      },
     },
   }
 </script>

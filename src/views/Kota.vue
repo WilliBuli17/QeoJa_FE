@@ -113,15 +113,11 @@
             ref="form"
             lazy-validation
           >
-            <v-card-text
-              v-if="action === 'Hapus'"
-            >
+            <v-card-text v-if="action === 'Hapus'">
               Apakah Anda Yakin Ingin Menghapus Data Kota {{ form.name }}?
             </v-card-text>
 
-            <v-card-text
-              v-else
-            >
+            <v-card-text v-else>
               <app-text-input
                 v-model="form.name"
                 :rules="nameRules"
@@ -140,23 +136,21 @@
 
             <v-card-actions>
               <v-spacer />
-              <v-btn
-                color="secondary"
+              <app-btn
                 text
                 :loading="loadingButton"
                 @click="dialogClose"
               >
                 Batal
-              </v-btn>
+              </app-btn>
 
-              <v-btn
-                color="secondary"
+              <app-btn
                 text
                 :loading="loadingButton"
                 @click="setForm"
               >
                 {{ action }}
-              </v-btn>
+              </app-btn>
             </v-card-actions>
           </v-form>
         </material-card>
@@ -188,13 +182,14 @@
         expeditionCost: null,
       },
       nameRules: [
-        v => !!v || 'Nama Harus Diisi',
-        v => (v && v.length <= 100) || 'Nama Tidak Boleh Lebih Dari 100 Karakter',
+        (v) => !!v || 'Nama Harus Diisi',
+        (v) => (v && v.length <= 100) || 'Nama Tidak Boleh Lebih Dari 100 Karakter',
       ],
       expeditionCostRules: [
-        v => !!v || 'Harga Ekspedisi Harus Diisi',
+        (v) => !!v || 'Harga Ekspedisi Harus Diisi',
         (v) => !v || /^[1-9]\d*$/.test(v) || 'Format Harga Tidak Valid',
-        v => (v && v >= 10000 && v <= 9999999) || 'Harga Ekspedisi Harus diantara Rp. 10.000 - Rp. 9.999.999',
+        (v) => (v && v >= 10000 && v <= 9999999) ||
+          'Harga Ekspedisi Harus diantara Rp. 10.000 - Rp. 9.999.999',
       ],
       apiService: new ApiService(),
       color: null,
@@ -241,23 +236,35 @@
     computed: {
       widthBtn () {
         switch (this.$vuetify.breakpoint.name) {
-          case 'xs': return '100%'
-          case 'sm': return '100%'
-          case 'md': return '40%'
-          case 'lg': return '25%'
-          case 'xl': return '15%'
-          default : return '100%'
+          case 'xs':
+            return '100%'
+          case 'sm':
+            return '100%'
+          case 'md':
+            return '40%'
+          case 'lg':
+            return '25%'
+          case 'xl':
+            return '15%'
+          default:
+            return '100%'
         }
       },
 
       widthDialog () {
         switch (this.$vuetify.breakpoint.name) {
-          case 'xs': return '100%'
-          case 'sm': return '60%'
-          case 'md': return '40%'
-          case 'lg': return '25%'
-          case 'xl': return '15%'
-          default : return '100%'
+          case 'xs':
+            return '100%'
+          case 'sm':
+            return '60%'
+          case 'md':
+            return '40%'
+          case 'lg':
+            return '25%'
+          case 'xl':
+            return '15%'
+          default:
+            return '100%'
         }
       },
     },
@@ -279,7 +286,7 @@
 
       dialogClose () {
         this.dialog = false
-        Object.keys(this.form).forEach(key => {
+        Object.keys(this.form).forEach((key) => {
           this.form[key] = null
         })
         this.$refs.form.reset()

@@ -109,15 +109,11 @@
             ref="form"
             lazy-validation
           >
-            <v-card-text
-              v-if="action === 'Hapus'"
-            >
+            <v-card-text v-if="action === 'Hapus'">
               Apakah Anda Yakin Ingin Menghapus Data Bank {{ form.bankName }} - {{ form.accountName }}?
             </v-card-text>
 
-            <v-card-text
-              v-else
-            >
+            <v-card-text v-else>
               <app-text-input
                 v-model="form.bankName"
                 :rules="bankNameRules"
@@ -141,23 +137,21 @@
 
             <v-card-actions>
               <v-spacer />
-              <v-btn
-                color="secondary"
+              <app-btn
                 text
                 :loading="loadingButton"
                 @click="dialogClose"
               >
                 Batal
-              </v-btn>
+              </app-btn>
 
-              <v-btn
-                color="secondary"
+              <app-btn
                 text
                 :loading="loadingButton"
                 @click="setForm"
               >
                 {{ action }}
-              </v-btn>
+              </app-btn>
             </v-card-actions>
           </v-form>
         </material-card>
@@ -190,15 +184,15 @@
         accountNumber: null,
       },
       bankNameRules: [
-        v => !!v || 'Nama Bank Harus Diisi',
-        v => (v && v.length <= 100) || 'Nama Bank Tidak Boleh Lebih Dari 100 Karakter',
+        (v) => !!v || 'Nama Bank Harus Diisi',
+        (v) => (v && v.length <= 100) || 'Nama Bank Tidak Boleh Lebih Dari 100 Karakter',
       ],
       accountNameRules: [
-        v => !!v || 'Nama Akun Harus Diisi',
-        v => (v && v.length <= 100) || 'Nama Akun Tidak Boleh Lebih Dari 100 Karakter',
+        (v) => !!v || 'Nama Akun Harus Diisi',
+        (v) => (v && v.length <= 100) || 'Nama Akun Tidak Boleh Lebih Dari 100 Karakter',
       ],
       accountNumberRules: [
-        v => !!v || 'No. Rek. Harus Diisi',
+        (v) => !!v || 'No. Rek. Harus Diisi',
         (v) => !v || /^[1-9]\d*$/.test(v) || 'Format No. Rek. Tidak Valid',
       ],
       apiService: new ApiService(),
@@ -253,23 +247,35 @@
     computed: {
       widthBtn () {
         switch (this.$vuetify.breakpoint.name) {
-          case 'xs': return '100%'
-          case 'sm': return '100%'
-          case 'md': return '40%'
-          case 'lg': return '25%'
-          case 'xl': return '15%'
-          default : return '100%'
+          case 'xs':
+            return '100%'
+          case 'sm':
+            return '100%'
+          case 'md':
+            return '40%'
+          case 'lg':
+            return '25%'
+          case 'xl':
+            return '15%'
+          default:
+            return '100%'
         }
       },
 
       widthDialog () {
         switch (this.$vuetify.breakpoint.name) {
-          case 'xs': return '100%'
-          case 'sm': return '60%'
-          case 'md': return '40%'
-          case 'lg': return '25%'
-          case 'xl': return '15%'
-          default : return '100%'
+          case 'xs':
+            return '100%'
+          case 'sm':
+            return '60%'
+          case 'md':
+            return '40%'
+          case 'lg':
+            return '25%'
+          case 'xl':
+            return '15%'
+          default:
+            return '100%'
         }
       },
     },
@@ -292,7 +298,7 @@
 
       dialogClose () {
         this.dialog = false
-        Object.keys(this.form).forEach(key => {
+        Object.keys(this.form).forEach((key) => {
           this.form[key] = null
         })
         this.$refs.form.reset()

@@ -190,7 +190,7 @@
 </template>
 
 <script>
-  // Utilities
+  import ApiService from '../service/ApiService'
   import { get } from 'vuex-pathify'
   import Vue from 'vue'
 
@@ -202,6 +202,7 @@
     name: 'DashboardView',
 
     data: () => ({
+      apiService: new ApiService(),
       charts: [{
         type: 'Bar',
         color: 'primary',
@@ -436,6 +437,30 @@
       sales: get('sales/sales'),
       totalSales () {
         return this.sales.reduce((acc, val) => acc + val.salesInM, 0)
+      },
+    },
+
+    mounted () {
+      this.readUser()
+    },
+
+    methods: {
+      async readUser () {
+        let result
+
+        if (sessionStorage.getItem('user')) {
+          result = await this.apiService.getData(this.$http, `employee/${sessionStorage.getItem('user')}`)
+        } else {
+          result = await this.apiService.getData(this.$http, `employee/${localStorage.getItem('user')}`)
+        }
+
+        if (result.data.data) {
+          if (sessionStorage.getItem('user')) {
+            sessionStorage.setItem('emp', result.data.data[0].id)
+          } else {
+            localStorage.setItem('emp', result.data.data[0].id)
+          }
+        }
       },
     },
   }

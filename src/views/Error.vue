@@ -31,6 +31,6 @@
 </script>
 
 <style lang="sass">
-  #error-view h1.text-h1
-    font-size: 14rem !important
+#error-view h1.text-h1
+  font-size: 14rem !important
 </style>

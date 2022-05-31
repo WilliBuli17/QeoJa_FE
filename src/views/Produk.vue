@@ -72,17 +72,23 @@
             </template>
 
             <template v-slot:[`item.avatar`]="{ item }">
-              <v-avatar
-                size="45"
-              >
-                <v-img
-                  :src="fotoPreview(item.picture)"
-                />
+              <v-avatar size="45">
+                <v-img :src="fotoPreview(item.picture)" />
               </v-avatar>
             </template>
 
             <template v-slot:[`item.price`]="{ item }">
               Rp. {{ formatExample(item.price) }}
+            </template>
+
+            <template v-slot:[`item.stock_quantity`]="{ item }">
+              <v-chip
+                class="ma-2"
+                :color="colorRanges(item.stock_quantity)"
+                text-color="white"
+              >
+                {{ item.stock_quantity }}
+              </v-chip>
             </template>
 
             <template v-slot:[`item.status`]="{ item }">
@@ -91,12 +97,13 @@
                 :color="item.deleted_at === null ? 'light-blue darken-3' : 'red accent-3'"
                 text-color="white"
               >
-                {{ statusShow('Normal', item.deleted_at) }}
+                {{ statusShow("Normal", item.deleted_at) }}
               </v-chip>
             </template>
 
             <template v-slot:[`item.actions`]="{ item }">
               <app-btn
+                v-if="item.deleted_at === null"
                 small
                 elevation="5"
                 class="ma-2 green accent-4"
@@ -117,14 +124,11 @@
                 rel="noopener noreferrer"
                 @click="dialogOpen('Hapus', item)"
               >
-                <v-icon
-                  left
-                >
-                  {{ item.deleted_at === null ? 'mdi-archive-cancel-outline' : 'mdi-refresh-outline' }}
+                <v-icon left>
+                  {{ item.deleted_at === null ? "mdi-archive-cancel-outline" : "mdi-refresh" }}
                 </v-icon>
-
                 <span>
-                  {{ statusShow('Reverse', item.deleted_at) }}
+                  {{ statusShow("Reverse", item.deleted_at) }}
                 </span>
               </app-btn>
             </template>
@@ -136,7 +140,7 @@
     <v-dialog
       v-model="dialog"
       persistent
-      :width="action === 'Hapus'? widthBtn : widthDialog"
+      :width="action === 'Hapus' ? widthBtn : widthDialog"
     >
       <v-card>
         <material-card
@@ -146,7 +150,7 @@
           <template #heading>
             <div class="pt-3 pb-2 px-3 white--text">
               <div class="text-h3 font-weight-normal">
-                {{ action === 'Hapus'? statusShow('Reverse', form.status) : action }} Produk
+                {{ action === "Hapus" ? statusShow("Reverse", form.status) : action }} Produk
               </div>
             </div>
           </template>
@@ -155,15 +159,11 @@
             ref="form"
             lazy-validation
           >
-            <v-card-text
-              v-if="action === 'Hapus'"
-            >
-              Apakah Anda Yakin Ingin {{ statusShow('Reverse', form.status) }} Data Produk {{ form.name }}?
+            <v-card-text v-if="action === 'Hapus'">
+              Apakah Anda Yakin Ingin {{ statusShow("Reverse", form.status) }} Data Produk {{ form.name }}?
             </v-card-text>
 
-            <v-card-text
-              v-else
-            >
+            <v-card-text v-else>
               <v-row
                 justify="center"
                 class="mb-2"
@@ -172,9 +172,7 @@
                   v-if="selectedFile != null || form.picture != null"
                   size="250"
                 >
-                  <v-img
-                    :src="fotoPreview(form.picture)"
-                  />
+                  <v-img :src="fotoPreview(form.picture)" />
                 </v-avatar>
               </v-row>
 
@@ -214,7 +212,7 @@
                   :color="form.status === null ? 'light-blue darken-3' : 'red accent-3'"
                   text-color="white"
                 >
-                  Produk {{ statusShow('Normal', form.status) }}
+                  Produk {{ statusShow("Normal", form.status) }}
                 </v-chip>
               </v-row>
 
@@ -319,7 +317,7 @@
                   <app-text-input
                     v-model="form.stockQuantity"
                     label="Stock"
-                    disabled
+                    readonly
                   />
                 </v-col>
 
@@ -343,23 +341,21 @@
 
             <v-card-actions>
               <v-spacer />
-              <v-btn
-                color="secondary"
+              <app-btn
                 text
                 :loading="loadingButton"
                 @click="dialogClose"
               >
                 Batal
-              </v-btn>
+              </app-btn>
 
-              <v-btn
-                color="secondary"
+              <app-btn
                 text
                 :loading="loadingButton"
                 @click="setForm"
               >
-                {{ action === 'Hapus'? statusShow('Reverse', form.status) : action }}
-              </v-btn>
+                {{ action === "Hapus" ? statusShow("Reverse", form.status) : action }}
+              </app-btn>
             </v-card-actions>
           </v-form>
         </material-card>
@@ -413,29 +409,21 @@
         picture: null,
       },
       nameRules: [
-        v => !!v || 'Nama Harus Diisi',
-        v => (v && v.length <= 100) || 'Nama Tidak Boleh Lebih Dari 100 Karakter',
+        (v) => !!v || 'Nama Harus Diisi',
+        (v) => (v && v.length <= 100) || 'Nama Tidak Boleh Lebih Dari 100 Karakter',
       ],
-      descriptionRules: [
-        v => !!v || 'Deskripsi Harus Diisi',
-      ],
-      unitRules: [
-        v => !!v || 'Satuan Kelamin Harus Diisi',
-      ],
+      descriptionRules: [(v) => !!v || 'Deskripsi Harus Diisi'],
+      unitRules: [(v) => !!v || 'Satuan Kelamin Harus Diisi'],
       volumeRules: [
-        v => !!v || 'Volume Harus Diisi',
+        (v) => !!v || 'Volume Harus Diisi',
         (v) => !v || /^[0-9]\d*(\.\d+)?$/.test(v) || 'Format Volume Tidak Valid',
       ],
       priceules: [
-        v => !!v || 'Harga Harus Diisi',
+        (v) => !!v || 'Harga Harus Diisi',
         (v) => !v || /^[1-9]\d*$/.test(v) || 'Format Harga Tidak Valid',
       ],
-      categoryIdRules: [
-        v => !!v || 'Kategori Bergabung Harus Diisi',
-      ],
-      suplierIdRules: [
-        v => !!v || 'Supplier Harus Diisi',
-      ],
+      categoryIdRules: [(v) => !!v || 'Kategori Bergabung Harus Diisi'],
+      suplierIdRules: [(v) => !!v || 'Supplier Harus Diisi'],
       dataSupplier: [],
       dataKategori: [],
       dateInput: false,
@@ -521,23 +509,35 @@
     computed: {
       widthBtn () {
         switch (this.$vuetify.breakpoint.name) {
-          case 'xs': return '100%'
-          case 'sm': return '100%'
-          case 'md': return '40%'
-          case 'lg': return '25%'
-          case 'xl': return '15%'
-          default : return '100%'
+          case 'xs':
+            return '100%'
+          case 'sm':
+            return '100%'
+          case 'md':
+            return '40%'
+          case 'lg':
+            return '25%'
+          case 'xl':
+            return '15%'
+          default:
+            return '100%'
         }
       },
 
       widthDialog () {
         switch (this.$vuetify.breakpoint.name) {
-          case 'xs': return '100%'
-          case 'sm': return '90%'
-          case 'md': return '80%'
-          case 'lg': return '60%'
-          case 'xl': return '40%'
-          default : return '100%'
+          case 'xs':
+            return '100%'
+          case 'sm':
+            return '90%'
+          case 'md':
+            return '80%'
+          case 'lg':
+            return '60%'
+          case 'xl':
+            return '40%'
+          default:
+            return '100%'
         }
       },
     },
@@ -569,7 +569,7 @@
 
       dialogClose () {
         this.dialog = false
-        Object.keys(this.form).forEach(key => {
+        Object.keys(this.form).forEach((key) => {
           this.form[key] = null
         })
         this.$refs.form.reset()
@@ -587,9 +587,13 @@
 
       onButtonClick () {
         this.isSelecting = true
-        window.addEventListener('focus', () => {
-          this.isSelecting = false
-        }, { once: true })
+        window.addEventListener(
+          'focus',
+          () => {
+            this.isSelecting = false
+          },
+          { once: true },
+        )
         this.$refs.uploader.click()
       },
 
@@ -617,6 +621,7 @@
           product.append('price', this.form.price)
           product.append('category_id', this.form.categoryId)
           product.append('suplier_id', this.form.suplierId)
+
           if (this.selectedFile != null) {
             product.append('picture', this.selectedFile)
           }
@@ -670,6 +675,20 @@
       formatExample (value) {
         const val = (value / 1).toFixed(2).replace('.', ',')
         return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+      },
+
+      colorRanges (value) {
+        if (value <= 0) {
+          return 'red accent-3'
+        } else if (value > 0 && value <= 50) {
+          return 'orange darken-2'
+        } else if (value > 50 && value <= 75) {
+          return 'yellow darken-2'
+        } else if (value > 75 && value <= 100) {
+          return 'green  darken-1'
+        } else if (value > 100) {
+          return 'light-blue darken-1'
+        }
       },
     },
   }

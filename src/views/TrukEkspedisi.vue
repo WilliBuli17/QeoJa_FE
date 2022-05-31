@@ -56,12 +56,8 @@
             </template>
 
             <template v-slot:[`item.avatar`]="{ item }">
-              <v-avatar
-                size="45"
-              >
-                <v-img
-                  :src="fotoPreview(item.picture)"
-                />
+              <v-avatar size="45">
+                <v-img :src="fotoPreview(item.picture)" />
               </v-avatar>
             </template>
 
@@ -129,15 +125,11 @@
             ref="form"
             lazy-validation
           >
-            <v-card-text
-              v-if="action === 'Hapus'"
-            >
+            <v-card-text v-if="action === 'Hapus'">
               Apakah Anda Yakin Ingin Menghapus Data Truk Ekspedisi {{ form.licenseId }}?
             </v-card-text>
 
-            <v-card-text
-              v-else
-            >
+            <v-card-text v-else>
               <v-row
                 justify="center"
                 class="mb-2"
@@ -146,9 +138,7 @@
                   v-if="selectedFile != null || form.picture != null"
                   size="250"
                 >
-                  <v-img
-                    :src="fotoPreview(form.picture)"
-                  />
+                  <v-img :src="fotoPreview(form.picture)" />
                 </v-avatar>
               </v-row>
 
@@ -215,23 +205,21 @@
 
             <v-card-actions>
               <v-spacer />
-              <v-btn
-                color="secondary"
+              <app-btn
                 text
                 :loading="loadingButton"
                 @click="dialogClose"
               >
                 Batal
-              </v-btn>
+              </app-btn>
 
-              <v-btn
-                color="secondary"
+              <app-btn
                 text
                 :loading="loadingButton"
                 @click="setForm"
               >
                 {{ action }}
-              </v-btn>
+              </app-btn>
             </v-card-actions>
           </v-form>
         </material-card>
@@ -265,16 +253,14 @@
         status: null,
         picture: null,
       },
-      licenseIdRules: [
-        v => !!v || 'No. Plat Harus Diisi',
-      ],
+      licenseIdRules: [(v) => !!v || 'No. Plat Harus Diisi'],
       minVolumeRules: [
-        v => !!v || 'Minimal Volume Harus Diisi',
-        v => (v && v > 0) || 'Minimal Volume Tidak Boleh Lebih Kecil Dari 0',
+        (v) => !!v || 'Minimal Volume Harus Diisi',
+        (v) => (v && v > 0) || 'Minimal Volume Tidak Boleh Lebih Kecil Dari 0',
         (v) => !v || /^[1-9]\d*$/.test(v) || 'Format Minimal Volume  Tidak Valid',
       ],
       maxVolumeRules: [
-        v => !!v || 'Maksimal Volume Harus Diisi',
+        (v) => !!v || 'Maksimal Volume Harus Diisi',
         (v) => !v || /^[1-9]\d*$/.test(v) || 'Format Maksimal Volume  Tidak Valid',
       ],
       dateInput: false,
@@ -346,12 +332,18 @@
     computed: {
       width () {
         switch (this.$vuetify.breakpoint.name) {
-          case 'xs': return '100%'
-          case 'sm': return '100%'
-          case 'md': return '40%'
-          case 'lg': return '25%'
-          case 'xl': return '15%'
-          default : return '100%'
+          case 'xs':
+            return '100%'
+          case 'sm':
+            return '100%'
+          case 'md':
+            return '40%'
+          case 'lg':
+            return '25%'
+          case 'xl':
+            return '15%'
+          default:
+            return '100%'
         }
       },
     },
@@ -368,7 +360,7 @@
           this.form.minVolume = item.min_volume
           this.form.maxVolume = item.max_volume
           this.form.picture = item.picture
-          this.form.status = item.deleted_at
+          this.form.status = item.status
         }
         this.action = action
         this.dialog = true
@@ -376,7 +368,7 @@
 
       dialogClose () {
         this.dialog = false
-        Object.keys(this.form).forEach(key => {
+        Object.keys(this.form).forEach((key) => {
           this.form[key] = null
         })
         this.$refs.form.reset()
@@ -394,9 +386,13 @@
 
       onButtonClick () {
         this.isSelecting = true
-        window.addEventListener('focus', () => {
-          this.isSelecting = false
-        }, { once: true })
+        window.addEventListener(
+          'focus',
+          () => {
+            this.isSelecting = false
+          },
+          { once: true },
+        )
         this.$refs.uploader.click()
       },
 

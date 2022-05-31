@@ -38,32 +38,33 @@
             </template>
 
             <template v-slot:[`item.avatar`]="{ item }">
-              <v-avatar
-                size="45"
-              >
-                <v-img
-                  :src="fotoPreview(item.picture)"
-                />
+              <v-avatar size="45">
+                <v-img :src="fotoPreview(item.picture)" />
               </v-avatar>
             </template>
 
             <template v-slot:[`item.status`]="{ item }">
               <v-chip
                 class="ma-2"
-                :color="item.deleted_at === null ? 'light-blue darken-3' : 'red accent-3'"
+                :color="
+                  item.deleted_at === null
+                    ? 'light-blue darken-3'
+                    : 'red accent-3'
+                "
                 text-color="white"
               >
-                {{ statusShow('Normal', item.deleted_at) }}
+                {{ statusShow("Normal", item.deleted_at) }}
               </v-chip>
             </template>
 
             <template v-slot:[`item.actions`]="{ item }">
               <app-btn
+                v-if="item.deleted_at === null"
                 small
                 elevation="5"
                 class="ma-2 green accent-4"
                 rel="noopener noreferrer"
-                @click="dialogOpen('Detail', item)"
+                @click="dialogOpen('Ubah', item)"
               >
                 <v-icon left>
                   mdi-open-in-new
@@ -79,15 +80,10 @@
                 rel="noopener noreferrer"
                 @click="dialogOpen('Hapus', item)"
               >
-                <v-icon
-                  left
-                >
-                  {{ item.deleted_at === null ? 'mdi-account-lock-outline' : 'mdi-account-reactivate' }}
+                <v-icon left>
+                  {{ item.deleted_at === null ? "mdi-account-lock-outline" : "mdi-account-reactivate" }}
                 </v-icon>
-
-                <span>
-                  {{ statusShow('Reverse', item.deleted_at) }}kan
-                </span>
+                <span> {{ statusShow("Reverse", item.deleted_at) }}kan </span>
               </app-btn>
             </template>
           </v-data-table>
@@ -98,7 +94,7 @@
     <v-dialog
       v-model="dialog"
       persistent
-      :width="action === 'Hapus'? widthBtn : widthDialog"
+      :width="action === 'Hapus' ? widthBtn : widthDialog"
     >
       <v-card>
         <material-card
@@ -108,7 +104,12 @@
           <template #heading>
             <div class="pt-3 pb-2 px-3 white--text">
               <div class="text-h3 font-weight-normal">
-                {{ action === 'Hapus'? `${statusShow('Reverse', form.status)}kan` : action }} Pelanggan
+                {{
+                  action === "Hapus"
+                    ? `${statusShow("Reverse", form.status)}kan`
+                    : action
+                }}
+                Pelanggan
               </div>
             </div>
           </template>
@@ -117,15 +118,11 @@
             ref="form"
             lazy-validation
           >
-            <v-card-text
-              v-if="action === 'Hapus'"
-            >
-              Apakah Anda Yakin Ingin {{ statusShow('Reverse', form.status) }}kan Data Pelanggan {{ form.name }}?
+            <v-card-text v-if="action === 'Hapus'">
+              Apakah Anda Yakin Ingin {{ statusShow("Reverse", form.status) }}kan Data Pelanggan {{ form.name }}?
             </v-card-text>
 
-            <v-card-text
-              v-else
-            >
+            <v-card-text v-else>
               <v-row
                 justify="center"
                 class="mb-2"
@@ -134,9 +131,7 @@
                   v-if="form.picture != null"
                   size="250"
                 >
-                  <v-img
-                    :src="fotoPreview(form.picture)"
-                  />
+                  <v-img :src="fotoPreview(form.picture)" />
                 </v-avatar>
               </v-row>
 
@@ -149,14 +144,12 @@
                   :color="form.status === null ? 'light-blue darken-3' : 'red accent-3'"
                   text-color="white"
                 >
-                  Pelanggan {{ statusShow('Normal', form.status) }}
+                  Pelanggan {{ statusShow("Normal", form.status) }}
                 </v-chip>
               </v-row>
 
               <v-row>
-                <v-col
-                  cols="12"
-                >
+                <v-col cols="12">
                   <app-text-input
                     v-model="form.name"
                     label="Nama"
@@ -195,24 +188,22 @@
 
             <v-card-actions>
               <v-spacer />
-              <v-btn
-                color="secondary"
+              <app-btn
                 text
                 :loading="loadingButton"
                 @click="dialogClose"
               >
                 Batal
-              </v-btn>
+              </app-btn>
 
-              <v-btn
+              <app-btn
                 v-if="action === 'Hapus'"
-                color="secondary"
                 text
                 :loading="loadingButton"
                 @click="setForm"
               >
-                {{ `${statusShow('Reverse', form.status)}kan` }}
-              </v-btn>
+                {{ `${statusShow("Reverse", form.status)}kan` }}
+              </app-btn>
             </v-card-actions>
           </v-form>
         </material-card>
@@ -313,23 +304,35 @@
     computed: {
       widthBtn () {
         switch (this.$vuetify.breakpoint.name) {
-          case 'xs': return '100%'
-          case 'sm': return '100%'
-          case 'md': return '40%'
-          case 'lg': return '25%'
-          case 'xl': return '15%'
-          default : return '100%'
+          case 'xs':
+            return '100%'
+          case 'sm':
+            return '100%'
+          case 'md':
+            return '40%'
+          case 'lg':
+            return '25%'
+          case 'xl':
+            return '15%'
+          default:
+            return '100%'
         }
       },
 
       widthDialog () {
         switch (this.$vuetify.breakpoint.name) {
-          case 'xs': return '100%'
-          case 'sm': return '90%'
-          case 'md': return '80%'
-          case 'lg': return '60%'
-          case 'xl': return '40%'
-          default : return '100%'
+          case 'xs':
+            return '100%'
+          case 'sm':
+            return '90%'
+          case 'md':
+            return '80%'
+          case 'lg':
+            return '60%'
+          case 'xl':
+            return '40%'
+          default:
+            return '100%'
         }
       },
     },
@@ -353,7 +356,7 @@
 
       dialogClose () {
         this.dialog = false
-        Object.keys(this.form).forEach(key => {
+        Object.keys(this.form).forEach((key) => {
           this.form[key] = null
         })
         this.$refs.form.reset()
