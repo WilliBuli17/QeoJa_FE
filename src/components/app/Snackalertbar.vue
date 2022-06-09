@@ -4,8 +4,6 @@
     timeout="3000"
     bottom
     right
-    text
-    outlined
     v-bind="$attrs"
     v-on="$listeners"
   >

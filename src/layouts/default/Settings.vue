@@ -35,6 +35,7 @@
           <strong class="mb-3 d-inline-block">SIDEBAR FILTERS</strong>
 
           <v-item-group
+            v-if="!this.$vuetify.theme.dark"
             v-model="color"
             mandatory
           >
@@ -55,7 +56,10 @@
             </v-item>
           </v-item-group>
 
-          <v-divider class="my-4 secondary" />
+          <v-divider
+            v-if="!this.$vuetify.theme.dark"
+            class="my-4 secondary"
+          />
 
           <strong class="mb-3 d-inline-block">SIDEBAR BACKGROUND</strong>
 
@@ -200,7 +204,7 @@
     mixins: [Proxyable],
 
     data: () => ({
-      color: '#E91E63',
+      color: '#9C27b0',
       colors: [
         '#9C27b0',
         '#00CAE3',

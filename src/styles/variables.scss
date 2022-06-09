@@ -1,5 +1,5 @@
 // reduce button default elevation
-// default background color is #EEEEEE
+// default background color is #FFFFFF
 
 $btn-sizes: (
   'small': 28,
@@ -8,16 +8,16 @@ $btn-sizes: (
 );
 
 $btn-font-sizes: (
-  'default': .75rem
+  'default': .95rem
 );
 
 $btn-font-weight: 400;
 $btn-letter-spacing: normal;
 $material-light: (
-  'background': #EEEEEE,
+  'background': #dedede,
   'text': (
     'primary': #333333,
-    'secondary': #999999
+    'secondary': #4d4d4d
   )
 );
 $btn-icon-font-size: 1.0625rem !important;
@@ -30,7 +30,7 @@ $card-border-radius: 6px;
 $card-text-font-weight: 300;
 $card-elevation: 1;
 
-$data-table-regular-header-font-size: 1.0625rem;
+$data-table-regular-header-font-size: 1.2rem;
 
 $shadow-key-umbra: (
   1: (0 1px 4px 0 rgba(0,0,0,.14)),
@@ -101,6 +101,6 @@ $headings: (
 );
 
 // Tabs
-$tab-font-size: .775rem;
+$tab-font-size: .800rem;
 $tab-font-weight: 500;
 $tabs-item-letter-spacing: normal;

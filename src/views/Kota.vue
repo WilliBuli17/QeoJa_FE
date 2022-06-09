@@ -30,7 +30,7 @@
               lg="6"
             >
               <app-btn
-                medium
+                small
                 :class="$vuetify.breakpoint.mdAndUp ? 'mt-4' : 'mt-n10'"
                 rel="noopener noreferrer"
                 :width="widthBtn"
@@ -121,14 +121,17 @@
               <app-text-input
                 v-model="form.name"
                 :rules="nameRules"
+                class="mb-5"
                 label="Nama"
               />
 
               <app-text-input
                 v-model="form.expeditionCost"
+                class="mt-5"
                 :rules="expeditionCostRules"
                 prefix="Rp."
                 label="Harga Ekspedisi"
+                suffix="/CC"
               />
             </v-card-text>
 
@@ -187,9 +190,7 @@
       ],
       expeditionCostRules: [
         (v) => !!v || 'Harga Ekspedisi Harus Diisi',
-        (v) => !v || /^[1-9]\d*$/.test(v) || 'Format Harga Tidak Valid',
-        (v) => (v && v >= 10000 && v <= 9999999) ||
-          'Harga Ekspedisi Harus diantara Rp. 10.000 - Rp. 9.999.999',
+        (v) => !v || /^[0-9]\d*(\.\d+)?$/.test(v) || 'Format Harga Tidak Valid',
       ],
       apiService: new ApiService(),
       color: null,
@@ -213,14 +214,14 @@
           class: 'primary--text',
         },
         {
-          text: 'Expedition Cost',
+          text: 'Expedition Cost (CC)',
           value: 'expedition_cost',
           align: 'start',
           sortable: true,
           class: 'primary--text',
         },
         {
-          text: 'Action',
+          text: 'Aksi',
           value: 'actions',
           align: 'end',
           sortable: true,
@@ -241,11 +242,11 @@
           case 'sm':
             return '100%'
           case 'md':
-            return '40%'
+            return '50%'
           case 'lg':
-            return '25%'
+            return '40%'
           case 'xl':
-            return '15%'
+            return '30%'
           default:
             return '100%'
         }
@@ -256,13 +257,13 @@
           case 'xs':
             return '100%'
           case 'sm':
-            return '60%'
+            return '100%'
           case 'md':
-            return '40%'
+            return '50%'
           case 'lg':
-            return '25%'
+            return '40%'
           case 'xl':
-            return '15%'
+            return '30%'
           default:
             return '100%'
         }

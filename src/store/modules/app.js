@@ -50,7 +50,7 @@ const state = {
     {
       title: 'Pengiriman Transaksi',
       icon: 'mdi-shipping-pallet',
-      // to: '/tables/regular/',
+      to: '/pengiriman-transaksi/',
     },
     {
       title: 'Laporan',

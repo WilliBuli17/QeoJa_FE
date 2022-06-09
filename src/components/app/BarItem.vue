@@ -12,7 +12,7 @@
               attrs: this.$attrs,
               class: {
                 'black--text': !hover,
-                'white--text secondary elevation-12': hover,
+                'white--text primary elevation-12': hover,
               },
               props: {
                 activeClass: '',

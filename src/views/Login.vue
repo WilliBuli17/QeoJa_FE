@@ -89,12 +89,12 @@
               md="6"
               class="primary"
             >
-              <div style="text-align: center; padding: 150px 0">
+              <div style="text-align: center; padding: 165px 0">
                 <v-card-text class="white--text">
                   <v-avatar
                     class="mb-6"
-                    tile
-                    size="80"
+                    color="grey lighten-3"
+                    size="250"
                   >
                     <img
                       src="../assets/logo.png"
@@ -208,7 +208,7 @@
 
 <style scoped>
 .hero-section {
-  background-image: url("../assets/clint-mckoy.jpg");
+  background-image: url("../assets/header-bg.png");
   background-size: cover;
 }
 </style>

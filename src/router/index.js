@@ -31,6 +31,7 @@ const router = new Router({
       route('Truk Ekspedisi', null, 'truk-ekspedisi'),
       route('Bank', null, 'bank'),
       route('Transaksi Pelanggan', null, 'transaksi-pelanggan'),
+      route('Pengiriman Transaksi', null, 'pengiriman-transaksi'),
       route('Status Transaksi', null, 'status-transaksi'),
       route('Pelanggan', null, 'pelanggan'),
       route('Login', null, 'login'),
@@ -54,16 +55,20 @@ router.beforeEach((to, from, next) => {
   // console.log(localStorage.getItem('user'))
   // console.log(localStorage.getItem('token'))
   // console.log(localStorage.getItem('emp'))
+  // console.log(localStorage.getItem('role'))
   // console.log(sessionStorage.getItem('user'))
   // console.log(sessionStorage.getItem('token'))
   // console.log(sessionStorage.getItem('emp'))
+  // console.log(sessionStorage.getItem('role'))
 
   // localStorage.removeItem('user')
   // localStorage.removeItem('token')
   // localStorage.removeItem('emp')
+  // localStorage.removeItem('role')
   // sessionStorage.removeItem('user')
   // sessionStorage.removeItem('token')
   // sessionStorage.removeItem('emp')
+  // sessionStorage.removeItem('role')
 
   let checkers = false
   if (!sessionStorage.getItem('token') && !localStorage.getItem('token')) {

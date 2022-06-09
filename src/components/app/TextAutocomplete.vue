@@ -5,7 +5,6 @@
     persistent-hint
     :return-object="false"
     :placeholder="label"
-    dense
     required
     v-bind="$attrs"
     v-on="$listeners"

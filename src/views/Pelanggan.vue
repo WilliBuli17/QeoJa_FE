@@ -288,7 +288,7 @@
           class: 'primary--text',
         },
         {
-          text: 'Action',
+          text: 'Aksi',
           value: 'actions',
           align: 'end',
           sortable: false,
@@ -309,11 +309,11 @@
           case 'sm':
             return '100%'
           case 'md':
-            return '40%'
+            return '50%'
           case 'lg':
-            return '25%'
+            return '40%'
           case 'xl':
-            return '15%'
+            return '30%'
           default:
             return '100%'
         }
@@ -372,11 +372,15 @@
       },
 
       async setForm () {
-        this.loadingButton = true
-        const result = await this.apiService.deleteData(this.$http, `customer/${this.form.id}`)
-        this.alert(result.data.status, result.data.message)
-        this.read()
-        this.dialogClose()
+        if (this.form.name === 'Super Customer') {
+          this.alert('warning', 'Data Ini Tidak Dapat Diubah atau Dihapus')
+        } else {
+          this.loadingButton = true
+          const result = await this.apiService.deleteData(this.$http, `customer/${this.form.id}`)
+          this.alert(result.data.status, result.data.message)
+          this.read()
+          this.dialogClose()
+        }
       },
 
       async read () {

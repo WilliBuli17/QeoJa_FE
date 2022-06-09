@@ -12,7 +12,7 @@
         v-for="menu in subMenu"
         :key="menu.name"
         class="ma-1"
-        medium
+        small
         rel="noopener noreferrer"
         :to="menu.to"
       >
@@ -46,7 +46,7 @@
               lg="6"
             >
               <app-btn
-                medium
+                small
                 :class="$vuetify.breakpoint.mdAndUp ? 'mt-4' : 'mt-n10'"
                 rel="noopener noreferrer"
                 :width="widthBtn"
@@ -291,6 +291,7 @@
                     v-model="form.volume"
                     :rules="volumeRules"
                     label="Volume"
+                    suffix="CC"
                   />
                 </v-col>
 
@@ -493,7 +494,7 @@
           class: 'primary--text',
         },
         {
-          text: 'Action',
+          text: 'Aksi',
           value: 'actions',
           align: 'end',
           sortable: false,

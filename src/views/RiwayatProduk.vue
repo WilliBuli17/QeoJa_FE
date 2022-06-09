@@ -30,7 +30,7 @@
               lg="6"
             >
               <app-btn
-                medium
+                small
                 :class="$vuetify.breakpoint.mdAndUp ? 'mt-4' : 'mt-n10'"
                 rel="noopener noreferrer"
                 :width="widthBtn"
@@ -114,7 +114,7 @@
     <v-dialog
       v-model="dialog"
       persistent
-      :width="widthDialog"
+      :width="action === 'Hapus' ? widthBtn : widthDialog"
     >
       <v-card>
         <material-card
@@ -208,7 +208,6 @@
                         label="Tanggal Riwayat"
                         :rules="historyDateRules"
                         readonly
-                        dense
                         required
                         v-bind="attrs"
                         v-on="on"
@@ -244,7 +243,6 @@
                         label="Tanggal Kedaluwarsa"
                         :rules="productExpiredDateRules"
                         readonly
-                        dense
                         required
                         v-bind="attrs"
                         v-on="on"
@@ -471,7 +469,7 @@
           class: 'primary--text',
         },
         {
-          text: 'Action',
+          text: 'Aksi',
           value: 'actions',
           align: 'end',
           sortable: true,
@@ -620,7 +618,6 @@
             result = await this.apiService.updateData(this.$http, `productHistory/${this.form.id}`, newData)
           }
 
-          console.log(result.data.message)
           this.alert(result.data.status, result.data.message)
           this.read()
           this.dialogClose()

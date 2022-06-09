@@ -7,6 +7,7 @@
 <script>
   // Styles
   import '@/styles/overrides.sass'
+  import '@/styles/scss/foodtruck.scss'
 
   export default {
     name: 'App',

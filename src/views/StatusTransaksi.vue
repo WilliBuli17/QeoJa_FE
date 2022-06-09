@@ -30,7 +30,7 @@
               lg="6"
             >
               <app-btn
-                medium
+                small
                 :class="$vuetify.breakpoint.mdAndUp ? 'mt-4' : 'mt-n10'"
                 rel="noopener noreferrer"
                 :width="widthBtn"
@@ -195,7 +195,7 @@
           class: 'primary--text',
         },
         {
-          text: 'Action',
+          text: 'Aksi',
           value: 'actions',
           align: 'end',
           sortable: true,
@@ -216,11 +216,11 @@
           case 'sm':
             return '100%'
           case 'md':
-            return '40%'
+            return '50%'
           case 'lg':
-            return '25%'
+            return '40%'
           case 'xl':
-            return '15%'
+            return '30%'
           default:
             return '100%'
         }
@@ -231,13 +231,13 @@
           case 'xs':
             return '100%'
           case 'sm':
-            return '60%'
+            return '100%'
           case 'md':
-            return '40%'
+            return '50%'
           case 'lg':
-            return '25%'
+            return '40%'
           case 'xl':
-            return '15%'
+            return '30%'
           default:
             return '100%'
         }
@@ -250,12 +250,26 @@
 
     methods: {
       dialogOpen (action, item) {
-        if (action === 'Ubah' || action === 'Hapus') {
-          this.form.id = item.id
-          this.form.name = item.name
+        const rolesPakem = [
+          'Menunggu Konfirmasi',
+          'Sedang Dikemas',
+          'Dalam Antrian Pengiriman',
+          'Dalam Pengiriman',
+          'Pengiriman Selesai',
+          'Pengiriman Selesai - Konfirmasi Pengguna',
+          'Transaksi Dibatalkan',
+        ]
+
+        if (item && rolesPakem.includes(item.name)) {
+          this.alert('warning', 'Data Ini Tidak Dapat Diubah atau Dihapus')
+        } else {
+          if (action === 'Ubah' || action === 'Hapus') {
+            this.form.id = item.id
+            this.form.name = item.name
+          }
+          this.action = action
+          this.dialog = true
         }
-        this.action = action
-        this.dialog = true
       },
 
       dialogClose () {

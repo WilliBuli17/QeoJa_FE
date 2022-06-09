@@ -9,7 +9,7 @@
       justify="end"
     >
       <app-btn
-        medium
+        small
         rel="noopener noreferrer"
         width="100"
         :to="'/role/'"
@@ -44,7 +44,7 @@
               lg="6"
             >
               <app-btn
-                medium
+                small
                 :class="$vuetify.breakpoint.mdAndUp ? 'mt-4' : 'mt-n10'"
                 rel="noopener noreferrer"
                 :width="widthBtn"
@@ -71,7 +71,7 @@
 
             <template v-slot:[`item.avatar`]="{ item }">
               <v-avatar size="45">
-                <v-img :src="fotoPreview(item.picture)" />
+                <v-img :src="$file + item.picture" />
               </v-avatar>
             </template>
 
@@ -296,7 +296,6 @@
                         label="Tanggal Bergabung"
                         :rules="dateJoinRules"
                         readonly
-                        dense
                         required
                         v-bind="attrs"
                         v-on="on"
@@ -380,6 +379,7 @@
         roleId: null,
         status: null,
         picture: null,
+        role: null,
       },
       emailRules: [
         (v) => !!v || 'Email Harus Diisi',
@@ -468,7 +468,7 @@
           class: 'primary--text',
         },
         {
-          text: 'Action',
+          text: 'Aksi',
           value: 'actions',
           align: 'end',
           sortable: false,
@@ -489,11 +489,11 @@
           case 'sm':
             return '100%'
           case 'md':
-            return '40%'
+            return '50%'
           case 'lg':
-            return '25%'
+            return '40%'
           case 'xl':
-            return '15%'
+            return '30%'
           default:
             return '100%'
         }
@@ -535,6 +535,7 @@
           this.form.roleId = item.role_id
           this.form.picture = item.picture
           this.form.status = item.deleted_at
+          this.form.role = item.role
         }
         this.action = action
         this.dialog = true
@@ -545,10 +546,10 @@
         Object.keys(this.form).forEach((key) => {
           this.form[key] = null
         })
+        this.selectedFile = null
         this.$refs.form.reset()
         this.$refs.form.resetValidation()
         this.loadingButton = false
-        this.selectedFile = null
       },
 
       alert (status, message) {
@@ -577,7 +578,9 @@
       async setForm () {
         let result
 
-        if (this.action === 'Hapus') {
+        if (this.form.role === 'Super Admin') {
+          this.alert('warning', 'Data Ini Tidak Dapat Diubah atau Dihapus')
+        } else if (this.action === 'Hapus') {
           this.loadingButton = true
           result = await this.apiService.deleteData(this.$http, `employee/${this.form.id}`)
 
@@ -625,7 +628,7 @@
       },
 
       fotoPreview (source) {
-        if (this.selectedFile === null) {
+        if (source) {
           return this.$file + source
         }
 

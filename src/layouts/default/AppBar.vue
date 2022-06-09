@@ -1,31 +1,37 @@
 <template>
-  <v-app-bar
-    id="default-app-bar"
-    app
-    absolute
-    class="v-bar--underline"
-    color="transparent"
-    :clipped-left="$vuetify.rtl"
-    :clipped-right="!$vuetify.rtl"
-    height="70"
-    flat
-  >
-    <v-app-bar-nav-icon
-      class="hidden-md-and-up"
-      @click="drawer = !drawer"
-    />
+  <div>
+    <v-overlay :value="overlay">
+      <app-progress-loading />
+    </v-overlay>
 
-    <default-drawer-toggle class="hidden-sm-and-down" />
+    <v-app-bar
+      id="default-app-bar"
+      app
+      absolute
+      class="v-bar--underline"
+      color="transparent"
+      :clipped-left="$vuetify.rtl"
+      :clipped-right="!$vuetify.rtl"
+      height="70"
+      flat
+    >
+      <v-app-bar-nav-icon
+        class="hidden-md-and-up"
+        @click="drawer = !drawer"
+      />
 
-    <v-toolbar-title
-      class="font-weight-light text-h5"
-      v-text="name"
-    />
+      <default-drawer-toggle class="hidden-sm-and-down" />
 
-    <v-spacer />
+      <v-toolbar-title
+        class="font-weight-light text-h5"
+        v-text="name"
+      />
 
-    <default-account />
-  </v-app-bar>
+      <v-spacer />
+
+      <default-account @load="loadOverlay" />
+    </v-app-bar>
+  </div>
 </template>
 
 <script>
@@ -46,12 +52,22 @@
       ),
     },
 
+    data: () => ({
+      overlay: false,
+    }),
+
     computed: {
       ...sync('app', [
         'drawer',
         'mini',
       ]),
       name: get('route/name'),
+    },
+
+    methods: {
+      loadOverlay () {
+        this.overlay = !this.overlay
+      },
     },
   }
 </script>

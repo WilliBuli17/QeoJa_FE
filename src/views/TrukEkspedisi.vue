@@ -30,7 +30,7 @@
               lg="6"
             >
               <app-btn
-                medium
+                small
                 :class="$vuetify.breakpoint.mdAndUp ? 'mt-4' : 'mt-n10'"
                 rel="noopener noreferrer"
                 :width="width"
@@ -184,20 +184,36 @@
 
               <app-text-input
                 v-model="form.licenseId"
+                class="mb-5"
                 :rules="licenseIdRules"
                 label="No. Plat"
               />
 
               <app-text-input
                 v-model="form.minVolume"
+                class="mt-5"
                 :rules="minVolumeRules"
                 label="Min. Volume"
+                suffix="CC"
               />
 
               <app-text-input
                 v-model="form.maxVolume"
+                class="mt-5"
                 :rules="maxVolumeRules"
                 label="Maks. Volume"
+                suffix="CC"
+              />
+
+              <app-text-autocomplete
+                v-if="action === 'Ubah'"
+                v-model="form.status"
+                class="mt-5"
+                :items="dataStatus"
+                item-text="name"
+                item-value="id"
+                :rules="statusRules"
+                label="Status"
               />
             </v-card-text>
 
@@ -257,15 +273,26 @@
       minVolumeRules: [
         (v) => !!v || 'Minimal Volume Harus Diisi',
         (v) => (v && v > 0) || 'Minimal Volume Tidak Boleh Lebih Kecil Dari 0',
-        (v) => !v || /^[1-9]\d*$/.test(v) || 'Format Minimal Volume  Tidak Valid',
+        (v) => !v || /^[1-9]\d*$/.test(v) || 'Format Minimal Volume Tidak Valid',
       ],
       maxVolumeRules: [
         (v) => !!v || 'Maksimal Volume Harus Diisi',
-        (v) => !v || /^[1-9]\d*$/.test(v) || 'Format Maksimal Volume  Tidak Valid',
+        (v) => !v || /^[1-9]\d*$/.test(v) || 'Format Maksimal Volume Tidak Valid',
       ],
+      statusRules: [(v) => !!v || 'Status Harus Diisi'],
       dateInput: false,
       selectedFile: null,
       isSelecting: false,
+      dataStatus: [
+        {
+          id: 'available',
+          name: 'Tersedia',
+        },
+        {
+          id: 'not available',
+          name: 'Sedang Dalam Perbaikan',
+        },
+      ],
       apiService: new ApiService(),
       color: null,
       title: null,
@@ -295,14 +322,14 @@
           class: 'primary--text',
         },
         {
-          text: 'Min. Volume',
+          text: 'Min. Vol (CC)',
           value: 'min_volume',
           align: 'start',
           sortable: true,
           class: 'primary--text',
         },
         {
-          text: 'Maks. Volume',
+          text: 'Maks. Vol (CC)',
           value: 'max_volume',
           align: 'start',
           sortable: true,
@@ -316,7 +343,7 @@
           class: 'primary--text',
         },
         {
-          text: 'Action',
+          text: 'Aksi',
           value: 'actions',
           align: 'end',
           sortable: false,
@@ -337,11 +364,11 @@
           case 'sm':
             return '100%'
           case 'md':
-            return '40%'
+            return '50%'
           case 'lg':
-            return '25%'
+            return '40%'
           case 'xl':
-            return '15%'
+            return '30%'
           default:
             return '100%'
         }
@@ -416,6 +443,7 @@
           expeditionTruck.append('license_id', this.form.licenseId)
           expeditionTruck.append('min_volume', this.form.minVolume)
           expeditionTruck.append('max_volume', this.form.maxVolume)
+          expeditionTruck.append('status', this.form.status)
           if (this.selectedFile != null) {
             expeditionTruck.append('picture', this.selectedFile)
           }

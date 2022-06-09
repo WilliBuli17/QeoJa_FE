@@ -10,7 +10,8 @@ import axios from 'axios'
 Vue.config.productionTip = false
 
 Vue.prototype.$http = axios
-Vue.prototype.$file = 'http://127.0.0.1:8000/'
+// Vue.prototype.$file = 'http://127.0.0.1:8000/'
+Vue.prototype.$file = 'https://f7a4-180-249-206-70.ap.ngrok.io/'
 
 sync(store, router)
 

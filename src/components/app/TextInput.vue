@@ -2,7 +2,6 @@
   <v-text-field
     :color="color"
     :label="label"
-    dense
     required
     v-bind="$attrs"
     v-on="$listeners"

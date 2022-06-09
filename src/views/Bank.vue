@@ -30,7 +30,7 @@
               lg="6"
             >
               <app-btn
-                medium
+                small
                 :class="$vuetify.breakpoint.mdAndUp ? 'mt-4' : 'mt-n10'"
                 rel="noopener noreferrer"
                 :width="widthBtn"
@@ -116,18 +116,21 @@
             <v-card-text v-else>
               <app-text-input
                 v-model="form.bankName"
+                class="mb-5"
                 :rules="bankNameRules"
                 label="Nama Bank"
               />
 
               <app-text-input
                 v-model="form.accountName"
+                class="mt-5"
                 :rules="accountNameRules"
                 label="Nama Akun"
               />
 
               <app-text-input
                 v-model="form.accountNumber"
+                class="mt-5"
                 :rules="accountNumberRules"
                 label="No. Rek."
               />
@@ -231,7 +234,7 @@
           class: 'primary--text',
         },
         {
-          text: 'Action',
+          text: 'Aksi',
           value: 'actions',
           align: 'end',
           sortable: true,
@@ -252,11 +255,11 @@
           case 'sm':
             return '100%'
           case 'md':
-            return '40%'
+            return '50%'
           case 'lg':
-            return '25%'
+            return '40%'
           case 'xl':
-            return '15%'
+            return '30%'
           default:
             return '100%'
         }
@@ -267,13 +270,13 @@
           case 'xs':
             return '100%'
           case 'sm':
-            return '60%'
+            return '100%'
           case 'md':
-            return '40%'
+            return '50%'
           case 'lg':
-            return '25%'
+            return '40%'
           case 'xl':
-            return '15%'
+            return '30%'
           default:
             return '100%'
         }
