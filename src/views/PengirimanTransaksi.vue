@@ -546,7 +546,7 @@
       },
       dataStatusTransaksi: [],
       statusRules: [
-        v => !!v || 'Status Rules Harus Diisi',
+        v => !!v || 'Status Harus Diisi',
       ],
       arrivedDateRules: [
         v => !!v || 'Tanggal Pengiriman Harus Diisi',

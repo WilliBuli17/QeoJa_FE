@@ -52,12 +52,15 @@ export function redirect (
   }
 }
 
-export function route (name, component, path = '') {
+export function route (name, component, path = '', roles) {
   component = Object(component) === component
     ? component
     : { default: name.replace(' ', '') }
 
   const components = {}
+  const meta = {
+    roles: roles,
+  }
 
   for (const [key, value] of Object.entries(component)) {
     components[key] = () => import(
@@ -70,5 +73,6 @@ export function route (name, component, path = '') {
     name,
     components,
     path,
+    meta,
   }
 }

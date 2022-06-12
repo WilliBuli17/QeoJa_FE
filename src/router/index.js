@@ -21,32 +21,22 @@ const router = new Router({
   routes: [
     layout('Default', [
       route('Dashboard'),
-      route('Role', null, 'role'),
-      route('Pegawai', null, 'pegawai'),
-      route('Produk', null, 'produk'),
-      route('Supplier', null, 'supplier'),
-      route('Kategori', null, 'kategori'),
-      route('Riwayat Produk', null, 'riwayat-produk'),
-      route('Kota', null, 'kota'),
-      route('Truk Ekspedisi', null, 'truk-ekspedisi'),
-      route('Bank', null, 'bank'),
-      route('Transaksi Pelanggan', null, 'transaksi-pelanggan'),
-      route('Pengiriman Transaksi', null, 'pengiriman-transaksi'),
-      route('Status Transaksi', null, 'status-transaksi'),
-      route('Pelanggan', null, 'pelanggan'),
+      route('Role', null, 'role', ['Super Admin', 'Owner', 'Manager']),
+      route('Pegawai', null, 'pegawai', ['Super Admin', 'Owner', 'Manager']),
+      route('Produk', null, 'produk', ['Super Admin', 'Manager', 'Admin Gudang']),
+      route('Supplier', null, 'supplier', ['Super Admin', 'Manager', 'Admin Gudang']),
+      route('Kategori', null, 'kategori', ['Super Admin', 'Manager', 'Admin Gudang']),
+      route('Riwayat Produk', null, 'riwayat-produk', ['Super Admin', 'Manager', 'Admin Gudang']),
+      route('Kota', null, 'kota', ['Super Admin', 'Owner', 'Manager']),
+      route('Truk Ekspedisi', null, 'truk-ekspedisi', ['Super Admin', 'Manager', 'Admin Ekspedisi']),
+      route('Bank', null, 'bank', ['Super Admin', 'Owner', 'Manager']),
+      route('Transaksi Pelanggan', null, 'transaksi-pelanggan', ['Super Admin', 'Manager', 'Admin Ekspedisi', 'Admin Gudang', 'Admin Penjualan']),
+      route('Pengiriman Transaksi', null, 'pengiriman-transaksi', ['Super Admin', 'Manager', 'Admin Ekspedisi', 'Admin Gudang', 'Admin Penjualan']),
+      route('Status Transaksi', null, 'status-transaksi', ['Super Admin', 'Manager']),
+      route('Pelanggan', null, 'pelanggan', ['Super Admin', 'Manager', 'Admin Penjualan']),
+      route('Laporan', null, 'laporan', ['Super Admin', 'Owner', 'Manager']),
       route('Login', null, 'login'),
       route('Error', null, '*'),
-
-      // // Pages
-      // route('UserProfile', null, 'components/profile'),
-      // // Components
-      // route('Notifications', null, 'components/notifications'),
-      // route('Icons', null, 'components/icons'),
-      // route('Typography', null, 'components/typography'),
-      // // Tables
-      // route('Regular Tables', null, 'tables/regular'),
-      // // Maps
-      // route('Google Maps', null, 'maps/google'),
     ]),
   ],
 })
@@ -77,9 +67,18 @@ router.beforeEach((to, from, next) => {
     checkers = false
   }
 
+  let role
+  if (sessionStorage.getItem('token')) {
+    role = sessionStorage.getItem('role')
+  } else {
+    role = localStorage.getItem('role')
+  }
+
   if (to.name !== 'Login' && checkers === true) {
     next({ name: 'Login' })
   } else if (to.name === 'Login' && checkers === false) {
+    next({ name: 'Dashboard' })
+  } else if (checkers === false && to.meta.roles && !to.meta.roles.includes(role)) {
     next({ name: 'Dashboard' })
   } else {
     return to.path.endsWith('/') ? next() : next(trailingSlash(to.path))

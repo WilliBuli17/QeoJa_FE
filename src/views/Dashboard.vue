@@ -10,7 +10,7 @@
       tag="section"
     >
       <v-row justify="center">
-        <!-- <v-col
+        <v-col
           class="order-last order-lg-first"
           cols="12"
           lg="8"
@@ -19,7 +19,7 @@
             <v-col cols="12">
               <v-row>
                 <v-col
-                  v-for="(chart, i) in charts"
+                  v-for="(chart, i) in returnCarts"
                   :key="`chart-${i}`"
                   cols="12"
                   lg="6"
@@ -31,27 +31,8 @@
                     :responsive-options="chart.responsiveOptions"
                     :title="chart.title"
                     :type="chart.type"
-                  >
-                    <template #subtitle>
-                      <div class="font-weight-light text--secondary">
-                        <div v-html="chart.subtitle" />
-                      </div>
-                    </template>
-
-                    <template #actions>
-                      <v-icon
-                        class="mr-1"
-                        small
-                      >
-                        mdi-clock-outline
-                      </v-icon>
-
-                      <span
-                        class="text-caption grey--text font-weight-light"
-                        v-text="chart.time"
-                      />
-                    </template>
-                  </material-chart-card>
+                    class="pb-2"
+                  />
                 </v-col>
               </v-row>
             </v-col>
@@ -59,23 +40,12 @@
             <v-col cols="12">
               <v-row>
                 <v-col
-                  v-for="({ actionIcon, actionText, ...attrs }, i) in stats"
+                  v-for="({...attrs }, i) in returnStates"
                   :key="i"
                   cols="12"
                   lg="6"
                 >
-                  <material-stat-card v-bind="attrs">
-                    <template #actions>
-                      <v-icon
-                        class="mr-2"
-                        small
-                        v-text="actionIcon"
-                      />
-                      <div class="text-truncate">
-                        {{ actionText }}
-                      </div>
-                    </template>
-                  </material-stat-card>
+                  <material-stat-card v-bind="attrs" />
                 </v-col>
               </v-row>
             </v-col>
@@ -84,96 +54,47 @@
               <v-row>
                 <v-col cols="12">
                   <material-card
-                    color="accent"
+                    color="#FF5252"
                     full-header
                   >
                     <template #heading>
-                      <v-tabs
-                        v-model="tabs"
-                        background-color="transparent"
-                        slider-color="white"
-                        class="pa-8"
-                      >
-                        <span
-                          class="subheading font-weight-light mx-3"
-                          style="align-self: center"
-                        >Tasks:</span>
-                        <v-tab class="mr-3">
-                          <v-icon class="mr-2">
-                            mdi-bug
-                          </v-icon>
-                          Bugs
-                        </v-tab>
-                        <v-tab class="mr-3">
-                          <v-icon class="mr-2">
-                            mdi-code-tags
-                          </v-icon>
-                          Website
-                        </v-tab>
-                        <v-tab>
-                          <v-icon class="mr-2">
-                            mdi-cloud
-                          </v-icon>
-                          Server
-                        </v-tab>
-                      </v-tabs>
+                      <div class="pa-8 white--text">
+                        <div class="text-h3 font-weight-light">
+                          Transaksi Terbaru
+                        </div>
+                      </div>
                     </template>
-                    <v-tabs-items
-                      v-model="tabs"
-                      background-color="transparent"
-                    >
-                      <v-tab-item
-                        v-for="n in 3"
-                        :key="n"
+                    <v-card-text>
+                      <div v-if="progressLoading">
+                        <app-progress-loading />
+                      </div>
+
+                      <v-data-table
+                        v-else
+                        :headers="headers"
+                        :items="returnItems"
+                        hide-default-footer
+                        disable-pagination
                       >
-                        <v-card-text>
-                          <template v-for="(task, i) in tasks[tabs]">
-                            <v-row
-                              :key="i"
-                              align="center"
-                              class="flex-nowrap"
-                            >
-                              <v-col cols="1">
-                                <v-list-item-action>
-                                  <v-simple-checkbox
-                                    v-model="task.value"
-                                    color="secondary"
-                                  />
-                                </v-list-item-action>
-                              </v-col>
+                        <template v-slot:[`item.index`]="{ item }">
+                          {{ returnItems.indexOf(item) + 1 }}
+                        </template>
 
-                              <v-col
-                                class="font-weight-light"
-                                cols="8"
-                                v-text="task.text"
-                              />
+                        <template v-slot:[`item.total_volume_product`]="{ item }">
+                          {{ formatExample(item.total_volume_product) }}
+                        </template>
 
-                              <v-col
-                                cols="auto"
-                                class="text-right"
-                              >
-                                <v-icon class="mx-1">
-                                  mdi-pencil
-                                </v-icon>
-
-                                <v-icon
-                                  class="mx-1"
-                                  color="error"
-                                >
-                                  mdi-close
-                                </v-icon>
-                              </v-col>
-                            </v-row>
-                          </template>
-                        </v-card-text>
-                      </v-tab-item>
-                    </v-tabs-items>
+                        <template v-slot:[`item.grand_total_price`]="{ item }">
+                          Rp. {{ formatExample(item.grand_total_price) }}
+                        </template>
+                      </v-data-table>
+                    </v-card-text>
                   </material-card>
                 </v-col>
               </v-row>
             </v-col>
           </v-row>
-        </v-col> -->
+        </v-col>
 
         <v-col
           cols="12"
@@ -365,71 +286,11 @@
           return (v && v === pass) || 'Konfirmasi Password Tidak Sama'
         },
       },
-
-      charts: [{
-        type: 'Bar',
-        color: 'primary',
-        title: 'Website Views',
-        subtitle: 'Last Campaign Performance',
-        time: 'updated 10 minutes ago',
-        data: {
-          labels: ['Ja', 'Fe', 'Ma', 'Ap', 'Mai', 'Ju', 'Jul', 'Au', 'Se', 'Oc', 'No', 'De'],
-          series: [
-            [542, 443, 320, 780, 553, 453, 326, 434, 568, 610, 756, 895],
-          ],
-        },
-        options: {
-          axisX: {
-            showGrid: false,
-          },
-          low: 0,
-          high: 1000,
-          chartPadding: {
-            top: 0,
-            right: 5,
-            bottom: 0,
-            left: 0,
-          },
-        },
-        responsiveOptions: [
-          ['screen and (max-width: 640px)', {
-            seriesBarDistance: 5,
-            axisX: {
-              labelInterpolationFnc: function (value) {
-                return value[0]
-              },
-            },
-          }],
-        ],
-      }, {
-        type: 'Line',
-        color: 'success',
-        title: 'Daily Sales',
-        subtitle: '<i class="mdi mdi-arrow-up green--text"></i><span class="green--text">55%</span>&nbsp;increase in today\'s sales',
-        time: 'updated 4 minutes ago',
-        data: {
-          labels: ['12am', '3pm', '6pm', '9pm', '12pm', '3am', '6am', '9am'],
-          series: [
-            [230, 750, 450, 300, 280, 240, 200, 190],
-          ],
-        },
-        options: {
-          lineSmooth,
-          low: 0,
-          high: 1000, // creative tim: we recommend you to set the high sa the biggest value + something for a better look
-          chartPadding: {
-            top: 0,
-            right: 0,
-            bottom: 0,
-            left: 0,
-          },
-        },
-      }],
       headers: [
         {
           sortable: false,
-          text: 'ID',
-          value: 'id',
+          text: 'No.',
+          value: 'index',
         },
         {
           sortable: false,
@@ -438,123 +299,32 @@
         },
         {
           sortable: false,
-          text: 'Salary',
-          value: 'salary',
-          align: 'right',
-        },
-        {
-          sortable: false,
-          text: 'Country',
-          value: 'country',
-          align: 'right',
-        },
-        {
-          sortable: false,
-          text: 'City',
+          text: 'Kota',
           value: 'city',
           align: 'right',
         },
-      ],
-      items: [
         {
-          id: 1,
-          name: 'Dakota Rice',
-          country: 'Niger',
-          city: 'Oud-Tunrhout',
-          salary: '$35,738',
+          sortable: false,
+          text: 'Volume (CC)',
+          value: 'total_volume_product',
+          align: 'right',
         },
         {
-          id: 2,
-          name: 'Minerva Hooper',
-          country: 'Curaçao',
-          city: 'Sinaai-Waas',
-          salary: '$23,738',
-        },
-        {
-          id: 3,
-          name: 'Sage Rodriguez',
-          country: 'Netherlands',
-          city: 'Overland Park',
-          salary: '$56,142',
-        },
-        {
-          id: 4,
-          name: 'Philip Chanley',
-          country: 'Korea, South',
-          city: 'Gloucester',
-          salary: '$38,735',
-        },
-        {
-          id: 5,
-          name: 'Doris Greene',
-          country: 'Malawi',
-          city: 'Feldkirchen in Kārnten',
-          salary: '$63,542',
+          sortable: false,
+          text: 'Total Harga',
+          value: 'grand_total_price',
+          align: 'right',
         },
       ],
-      stats: [
-        {
-          actionIcon: 'mdi-alert',
-          actionText: 'Get More Space...',
-          color: '#FD9A13',
-          icon: 'mdi-sofa-single',
-          title: 'Bookings',
-          value: '184',
-        },
-        {
-          actionIcon: 'mdi-tag',
-          actionText: 'Tracked from Google Analytics',
-          color: 'primary',
-          icon: 'mdi-chart-bar',
-          title: 'Website Visits',
-          value: '75.521',
-        },
-      ],
-      tabs: 0,
-      tasks: {
-        0: [
-          {
-            text: 'Sign contract for "What are conference organizers afraid of?"',
-            value: true,
-          },
-          {
-            text: 'Lines From Great Russian Literature? Or E-mails From My Boss?',
-            value: false,
-          },
-          {
-            text: 'Flooded: One year later, assessing what was lost and what was found when a ravaging rain swept through metro Detroit',
-            value: false,
-          },
-          {
-            text: 'Create 4 Invisible User Experiences you Never Knew About',
-            value: true,
-          },
-        ],
-        1: [
-          {
-            text: 'Flooded: One year later, assessing what was lost and what was found when a ravaging rain swept through metro Detroit',
-            value: true,
-          },
-          {
-            text: 'Sign contract for "What are conference organizers afraid of?"',
-            value: false,
-          },
-        ],
-        2: [
-          {
-            text: 'Lines From Great Russian Literature? Or E-mails From My Boss?',
-            value: false,
-          },
-          {
-            text: 'Flooded: One year later, assessing what was lost and what was found when a ravaging rain swept through metro Detroit',
-            value: true,
-          },
-          {
-            text: 'Sign contract for "What are conference organizers afraid of?"',
-            value: true,
-          },
-        ],
-      },
+      dataTransaksi: [],
+      progressLoading: false,
+      dataPelanggan: [],
+      dataCartBar: [],
+      datasetBar: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      hightBar: 1000,
+      dataCartLine: [],
+      datasetLine: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      hightLine: 1000,
     }),
 
     computed: {
@@ -562,10 +332,104 @@
       totalSales () {
         return this.sales.reduce((acc, val) => acc + val.salesInM, 0)
       },
+
+      returnItems () {
+        const filteredArrays = this.dataTransaksi
+        filteredArrays.sort((a, b) => b.id - a.id)
+
+        const item = filteredArrays.slice(0, 5)
+        return item
+      },
+
+      returnStates () {
+        const stats = [
+          {
+            color: '#FD9A13',
+            icon: 'mdi-paper-roll-outline',
+            title: 'Total Transaksi Yang Telah Dilakukan',
+            value: this.formatDigit((this.dataTransaksi.length).toString()),
+          },
+          {
+            color: '#E91E63',
+            icon: 'mdi-account',
+            title: 'Total Pelanggan Yang Telah Terdaftar',
+            value: (this.dataPelanggan.length).toString(),
+          },
+        ]
+
+        return stats
+      },
+
+      returnCarts () {
+        const charts = [
+          {
+            type: 'Bar',
+            color: '#00CAE3',
+            title: 'Jumlah Produk Terjual',
+            data: {
+              labels: ['Ja', 'Fe', 'Ma', 'Ap', 'Mey', 'Ju', 'Jul', 'Au', 'Se', 'Oc', 'No', 'De'],
+              series: [
+                this.datasetBar,
+              ],
+            },
+            options: {
+              axisX: {
+                showGrid: false,
+              },
+              low: 0,
+              high: this.hightBar,
+              chartPadding: {
+                top: 0,
+                right: 5,
+                bottom: 0,
+                left: 0,
+              },
+            },
+            responsiveOptions: [
+              ['screen and (max-width: 640px)', {
+                seriesBarDistance: 5,
+                axisX: {
+                  labelInterpolationFnc: function (value) {
+                    return value[0]
+                  },
+                },
+              }],
+            ],
+          },
+          {
+            type: 'Line',
+            color: '#4CAF50',
+            title: 'Jumlah Transaki',
+            data: {
+              labels: ['Ja', 'Fe', 'Ma', 'Ap', 'Mey', 'Ju', 'Jul', 'Au', 'Se', 'Oc', 'No', 'De'],
+              series: [
+                this.datasetLine,
+              ],
+            },
+            options: {
+              lineSmooth,
+              low: 0,
+              high: this.hightLine,
+              chartPadding: {
+                top: 0,
+                right: 0,
+                bottom: 0,
+                left: 0,
+              },
+            },
+          },
+        ]
+
+        return charts
+      },
     },
 
     mounted () {
       this.readUser()
+      this.readTransactions()
+      this.readCustomer()
+      this.dashboardCartBar()
+      this.dashboardCartLine()
     },
 
     methods: {
@@ -671,6 +535,58 @@
           this.form.password = null
           this.form.confirmPassword = null
         }
+      },
+
+      formatDigit (value) {
+        const val = (value / 1).toFixed(0).replace('.', ',')
+        return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+      },
+
+      formatExample (value) {
+        const val = (value / 1).toFixed(2).replace('.', ',')
+        return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+      },
+
+      async readTransactions () {
+        // this.progressLoading = true
+        const result = await this.apiService.getData(this.$http, 'transaction')
+        this.dataTransaksi = result.data.data
+        // this.progressLoading = false
+      },
+
+      async readCustomer () {
+        // this.progressLoading = true
+        const result = await this.apiService.getData(this.$http, 'customer')
+        this.dataPelanggan = result.data.data
+        // this.progressLoading = false
+      },
+
+      async dashboardCartBar () {
+        // this.progressLoading = true
+        const d = new Date()
+        const result = await this.apiService.getData(this.$http, `dashboardProdukTerjual/${d.getFullYear()}`)
+        this.dataCartBar = result.data.data
+
+        for (let i = 0; i < this.dataCartBar.length; i++) {
+          const bln = this.dataCartBar[i].bln
+          this.datasetBar[bln - 1] = Math.floor(this.dataCartBar[i].success)
+        }
+        this.hightBar = Math.ceil(Math.max(...this.dataCartBar.map(({ success }) => success)) / 100) * 100
+        // this.progressLoading = false
+      },
+
+      async dashboardCartLine () {
+        // this.progressLoading = true
+        const d = new Date()
+        const result = await this.apiService.getData(this.$http, `dashboardJumlahTransaksi/${d.getFullYear()}`)
+        this.dataCartLine = result.data.data
+
+        for (let i = 0; i < this.dataCartLine.length; i++) {
+          const bln = this.dataCartLine[i].bln
+          this.datasetLine[bln - 1] = Math.floor(this.dataCartLine[i].success)
+        }
+        this.hightLine = Math.ceil(Math.max(...this.dataCartLine.map(({ success }) => success)) / 100) * 100
+        // this.progressLoading = false
       },
     },
   }
