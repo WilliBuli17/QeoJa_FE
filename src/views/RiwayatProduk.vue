@@ -435,7 +435,7 @@
         },
         {
           text: 'Produk',
-          value: 'product_id',
+          value: 'name',
           align: 'start',
           sortable: true,
           class: 'primary--text',

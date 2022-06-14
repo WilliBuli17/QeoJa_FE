@@ -6,11 +6,14 @@ import './plugins'
 import store from './store'
 import { sync } from 'vuex-router-sync'
 import axios from 'axios'
+import VueExcelXlsx from 'vue-excel-xlsx'
 
 Vue.config.productionTip = false
 
 Vue.prototype.$http = axios
 Vue.prototype.$file = 'http://127.0.0.1:8000/'
+
+Vue.use(VueExcelXlsx)
 
 sync(store, router)
 

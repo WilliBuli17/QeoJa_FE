@@ -3,7 +3,7 @@
     :color="color"
     timeout="3000"
     bottom
-    right
+    center
     v-bind="$attrs"
     v-on="$listeners"
   >

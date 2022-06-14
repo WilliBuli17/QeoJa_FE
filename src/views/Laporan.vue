@@ -171,10 +171,19 @@
               Cetak
             </v-btn>
           </v-toolbar-items> -->
+
+          <vue-excel-xlsx
+            :data="dataShow"
+            :columns="returnColumns"
+            :file-name="action"
+            :file-type="'xlsx'"
+            :sheet-name="tipe"
+          >
+            Download
+          </vue-excel-xlsx>
         </v-toolbar>
 
         <v-card-text
-          v-if="form.productId"
           class="mt-16 pt-16 text-center"
         >
           <span class="text-h2 font-weight-medium">{{ `${action} - ${tipe}` }}</span>
@@ -397,7 +406,7 @@
                 class: 'primary--text',
               },
               {
-                text: 'Bulanan',
+                text: 'Bulan',
                 value: 'bulan',
                 align: 'start',
                 sortable: true,
@@ -517,7 +526,7 @@
                 class: 'primary--text',
               },
               {
-                text: 'Bulanan',
+                text: 'Bulan',
                 value: 'bulan',
                 align: 'start',
                 sortable: true,
@@ -609,7 +618,7 @@
                 class: 'primary--text',
               },
               {
-                text: 'Bulanan',
+                text: 'Bulan',
                 value: 'bulan',
                 align: 'start',
                 sortable: true,
@@ -693,6 +702,177 @@
         }
 
         return objectHeader
+      },
+
+      returnColumns () {
+        let objectColumns
+
+        if (this.action === 'Laporan Stock/Pengeluaran') {
+          if (this.tipe === 'Bulanan') {
+            objectColumns = [
+              {
+                label: 'Bulan',
+                field: 'bulan',
+              },
+              {
+                label: 'Barang Masuk',
+                field: 'barang_masuk',
+              },
+              {
+                label: 'Harga Barang Masuk',
+                field: 'harga_barang_masuk',
+              },
+              {
+                label: 'Barang Keluar',
+                field: 'barang_keluar',
+              },
+              {
+                label: 'Harga Barang Keluar',
+                field: 'harga_barang_keluar',
+              },
+              {
+                label: 'Total Barang',
+                field: 'total_barang',
+              },
+              {
+                label: 'Total Harga Barang',
+                field: 'total_harga_barang',
+              },
+            ]
+          } else if (this.tipe === 'Tahunan') {
+            objectColumns = [
+              {
+                label: 'Tahun',
+                field: 'tahun',
+              },
+              {
+                label: 'Barang Masuk',
+                field: 'barang_masuk',
+              },
+              {
+                label: 'Harga Barang Masuk',
+                field: 'harga_barang_masuk',
+              },
+              {
+                label: 'Barang Keluar',
+                field: 'barang_keluar',
+              },
+              {
+                label: 'Harga Barang Keluar',
+                field: 'harga_barang_keluar',
+              },
+              {
+                label: 'Total Barang',
+                field: 'total_barang',
+              },
+              {
+                label: 'Total Harga Barang',
+                field: 'total_harga_barang',
+              },
+            ]
+          }
+        } else if (this.action === 'Laporan Transaksi/Pendapatan') {
+          if (this.tipe === 'Bulanan') {
+            objectColumns = [
+              {
+                label: 'Bulanan',
+                field: 'bulan',
+              },
+              {
+                label: 'Penjualan Produk',
+                field: 'subtotal_price',
+              },
+              {
+                label: 'Pajak',
+                field: 'tax',
+              },
+              {
+                label: 'Biaya Pengiriman',
+                field: 'shipping_cost',
+              },
+              {
+                label: 'Total',
+                field: 'grand_total_price',
+              },
+            ]
+          } else if (this.tipe === 'Tahunan') {
+            objectColumns = [
+              {
+                label: 'Tahun',
+                field: 'tahun',
+              },
+              {
+                label: 'Penjualan Produk',
+                field: 'subtotal_price',
+              },
+              {
+                label: 'Pajak',
+                field: 'tax',
+              },
+              {
+                label: 'Biaya Pengiriman',
+                field: 'shipping_cost',
+              },
+              {
+                label: 'Total',
+                field: 'grand_total_price',
+              },
+            ]
+          }
+        } else if (this.action === 'Laporan Penjualan Produk') {
+          if (this.tipe === 'Bulanan') {
+            objectColumns = [
+              {
+                label: 'Bulan',
+                field: 'bulan',
+              },
+              {
+                label: 'Jumlah Sukses',
+                field: 'success',
+              },
+              {
+                label: 'Rerata Harga Sukses',
+                field: 'success_price',
+              },
+              {
+                label: 'Jumlah Gagal',
+                field: 'fails',
+              },
+              {
+                label: 'Rerata Harga Gagal',
+                field: 'fails_price',
+              },
+            ]
+          } else if (this.tipe === 'Tahunan') {
+            objectColumns = [
+              {
+                label: 'Tahun',
+                field: 'tahun',
+                align: 'start',
+                sortable: true,
+                class: 'primary--label',
+              },
+              {
+                label: 'Jumlah Sukses',
+                field: 'success',
+              },
+              {
+                label: 'Rerata Harga Sukses',
+                field: 'success_price',
+              },
+              {
+                label: 'Jumlah Gagal',
+                field: 'fails',
+              },
+              {
+                label: 'Rerata Harga Gagal',
+                field: 'fails_price',
+              },
+            ]
+          }
+        }
+
+        return objectColumns
       },
 
       widthDialog () {

@@ -13,7 +13,7 @@
         <v-col
           class="order-last order-lg-first"
           cols="12"
-          lg="8"
+          lg="9"
         >
           <v-row>
             <v-col cols="12">
@@ -98,7 +98,7 @@
 
         <v-col
           cols="12"
-          lg="4"
+          lg="3"
         >
           <app-card class="mt-4 text-center">
             <label
@@ -325,6 +325,8 @@
       dataCartLine: [],
       datasetLine: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       hightLine: 1000,
+      valueStateTransaction: 0,
+      valueStateCustomer: 0,
     }),
 
     computed: {
@@ -347,13 +349,13 @@
             color: '#FD9A13',
             icon: 'mdi-paper-roll-outline',
             title: 'Total Transaksi Yang Telah Dilakukan',
-            value: this.formatDigit((this.dataTransaksi.length).toString()),
+            value: this.formatDigit(this.valueStateTransaction.toString()),
           },
           {
             color: '#E91E63',
             icon: 'mdi-account',
             title: 'Total Pelanggan Yang Telah Terdaftar',
-            value: (this.dataPelanggan.length).toString(),
+            value: this.valueStateCustomer.toString(),
           },
         ]
 
@@ -399,7 +401,7 @@
           {
             type: 'Line',
             color: '#4CAF50',
-            title: 'Jumlah Transaki',
+            title: 'Jumlah Transaksi',
             data: {
               labels: ['Ja', 'Fe', 'Ma', 'Ap', 'Mey', 'Ju', 'Jul', 'Au', 'Se', 'Oc', 'No', 'De'],
               series: [
@@ -426,8 +428,8 @@
 
     mounted () {
       this.readUser()
-      this.readTransactions()
       this.readCustomer()
+      this.readTransactions()
       this.dashboardCartBar()
       this.dashboardCartLine()
     },
@@ -551,6 +553,9 @@
         // this.progressLoading = true
         const result = await this.apiService.getData(this.$http, 'transaction')
         this.dataTransaksi = result.data.data
+        if (result.data.status === 'success') {
+          this.valueStateTransaction = (this.dataTransaksi.length)
+        }
         // this.progressLoading = false
       },
 
@@ -558,6 +563,9 @@
         // this.progressLoading = true
         const result = await this.apiService.getData(this.$http, 'customer')
         this.dataPelanggan = result.data.data
+        if (result.data.status === 'success') {
+          this.valueStateCustomer = this.dataPelanggan.length
+        }
         // this.progressLoading = false
       },
 
@@ -571,7 +579,8 @@
           const bln = this.dataCartBar[i].bln
           this.datasetBar[bln - 1] = Math.floor(this.dataCartBar[i].success)
         }
-        this.hightBar = Math.ceil(Math.max(...this.dataCartBar.map(({ success }) => success)) / 100) * 100
+        this.hightBar = Math.max(...this.dataCartBar.map(({ success }) => success))
+        this.hightBar = this.hightBar + Math.ceil(this.hightBar * 0.25)
         // this.progressLoading = false
       },
 
@@ -585,7 +594,8 @@
           const bln = this.dataCartLine[i].bln
           this.datasetLine[bln - 1] = Math.floor(this.dataCartLine[i].success)
         }
-        this.hightLine = Math.ceil(Math.max(...this.dataCartLine.map(({ success }) => success)) / 100) * 100
+        this.hightLine = Math.max(...this.dataCartLine.map(({ success }) => success))
+        this.hightLine = this.hightLine + Math.ceil(this.hightLine * 0.25)
         // this.progressLoading = false
       },
     },

@@ -8,7 +8,7 @@
         md="auto"
       >
         <div class="text-body-1 font-weight-light pt-6 pt-md-0 text-center">
-          &copy; {{ (new Date()).getFullYear() }}, Made by QeoJa
+          &copy; {{ (new Date()).getFullYear() }}, Made by QeoJa -- DEMO ONLY
         </div>
       </v-col>
     </v-row>
