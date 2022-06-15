@@ -376,15 +376,15 @@
             },
             options: {
               axisX: {
-                showGrid: false,
+                showGrid: true,
               },
               low: 0,
               high: this.hightBar,
               chartPadding: {
                 top: 0,
-                right: 5,
-                bottom: 0,
-                left: 0,
+                right: -10,
+                bottom: -13,
+                left: -5,
               },
             },
             responsiveOptions: [
@@ -414,9 +414,9 @@
               high: this.hightLine,
               chartPadding: {
                 top: 0,
-                right: 0,
-                bottom: 0,
-                left: 0,
+                right: -10,
+                bottom: -13,
+                left: -5,
               },
             },
           },

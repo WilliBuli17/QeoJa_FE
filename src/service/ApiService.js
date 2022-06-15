@@ -1,6 +1,6 @@
 class ApiService {
   constructor () {
-    this._url = 'http://127.0.0.1:8000/api/'
+    this._url = 'https://qeoja-api.my.id/api/'
   }
 
   async storeData (http, sublink, data) {
