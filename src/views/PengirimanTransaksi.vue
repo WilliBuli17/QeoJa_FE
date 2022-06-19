@@ -328,7 +328,7 @@
 
                     <v-card
                       v-for="index in dataDetailTransaksi"
-                      :key="index.name"
+                      :key="index.id"
                       elevation="0"
                       class="border br-10 mb-4"
                     >
@@ -636,7 +636,7 @@
         this.form.address = item.address
         this.form.truck = item.license_id
         this.form.employee = item.employee
-        this.form.status = item.transaction_status
+        this.form.status = Number(item.transaction_status)
         this.form.transactionId = item.transaction_id
         this.form.totalVolumeProduct = item.total_volume_product
         this.form.deliveryDate = item.delivery_date

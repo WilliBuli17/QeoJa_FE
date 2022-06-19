@@ -574,6 +574,7 @@
         const d = new Date()
         const result = await this.apiService.getData(this.$http, `dashboardProdukTerjual/${d.getFullYear()}`)
         this.dataCartBar = result.data.data
+        console.log(result.data.message)
 
         for (let i = 0; i < this.dataCartBar.length; i++) {
           const bln = this.dataCartBar[i].bln
@@ -589,6 +590,7 @@
         const d = new Date()
         const result = await this.apiService.getData(this.$http, `dashboardJumlahTransaksi/${d.getFullYear()}`)
         this.dataCartLine = result.data.data
+        console.log(result.data.message)
 
         for (let i = 0; i < this.dataCartLine.length; i++) {
           const bln = this.dataCartLine[i].bln

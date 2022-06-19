@@ -415,7 +415,7 @@
 
                     <v-card
                       v-for="index in dataDetailTransaksi"
-                      :key="index.name"
+                      :key="index.id"
                       elevation="0"
                       class="border br-10 mb-4"
                     >
@@ -829,7 +829,7 @@
         this.form.tax = item.tax
         this.form.shippingCost = item.shipping_cost
         this.form.grandTotalPrice = item.grand_total_price
-        this.form.status = item.transaction_status_id
+        this.form.status = Number(item.transaction_status_id)
         this.form.totalVolume = item.total_volume_product
         this.form.receipt = item.receipt_of_payment
 

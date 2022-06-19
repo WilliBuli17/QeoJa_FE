@@ -79,7 +79,6 @@
 
             <template v-slot:[`item.actions`]="{ item }">
               <app-btn
-                v-if="item.deleted_by === null"
                 small
                 elevation="5"
                 class="ma-2 green accent-4"
@@ -87,9 +86,9 @@
                 @click="dialogOpen('Ubah', item)"
               >
                 <v-icon left>
-                  mdi-pencil-outline
+                  {{ item.deleted_by === null ? `mdi-pencil-outline` : `mdi-open-in-new` }}
                 </v-icon>
-                <span>Ubah</span>
+                <span>{{ item.deleted_by === null ? `Ubah` : `Detail` }}</span>
               </app-btn>
 
               <app-btn
@@ -342,6 +341,7 @@
 
               <app-btn
                 text
+                :disabled="form.deletedBy && action === 'Ubah'"
                 :loading="loadingButton"
                 @click="setForm"
               >
@@ -548,7 +548,7 @@
           this.form.amountOfProduct = item.amount_of_product
           this.form.productPrice = item.product_price
           this.form.productExpiredDate = item.product_expired_date
-          this.form.productId = item.product_id
+          this.form.productId = Number(item.product_id)
           this.form.createdBy = item.created_by
           this.form.updatedBy = item.updated_by
           this.form.deletedBy = item.deleted_by

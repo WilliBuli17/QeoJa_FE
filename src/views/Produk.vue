@@ -559,8 +559,8 @@
           this.form.volume = item.volume
           this.form.price = item.price
           this.form.stockQuantity = item.stock_quantity
-          this.form.categoryId = item.category_id
-          this.form.suplierId = item.suplier_id
+          this.form.categoryId = Number(item.category_id)
+          this.form.suplierId = Number(item.suplier_id)
           this.form.picture = item.picture
           this.form.status = item.deleted_at
         }

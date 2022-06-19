@@ -532,7 +532,7 @@
           this.form.phone = item.phone
           this.form.address = item.address
           this.form.dateJoin = item.date_join
-          this.form.roleId = item.role_id
+          this.form.roleId = Number(item.role_id)
           this.form.picture = item.picture
           this.form.status = item.deleted_at
           this.form.role = item.role
@@ -578,9 +578,11 @@
       async setForm () {
         let result
 
-        if (this.form.role === 'Super Admin') {
-          this.alert('warning', 'Data Ini Tidak Dapat Diubah atau Dihapus')
-        } else if (this.action === 'Hapus') {
+        // if (this.form.role === 'Super Admin') {
+        //   this.alert('warning', 'Data Ini Tidak Dapat Diubah atau Dihapus')
+        // } else
+
+        if (this.action === 'Hapus') {
           this.loadingButton = true
           result = await this.apiService.deleteData(this.$http, `employee/${this.form.id}`)
 
