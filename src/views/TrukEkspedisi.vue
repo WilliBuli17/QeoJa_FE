@@ -469,11 +469,11 @@
       },
 
       fotoPreview (source) {
-        if (this.selectedFile === null) {
+        if (this.selectedFile) {
+          return URL.createObjectURL(this.selectedFile)
+        } else if (source) {
           return this.$file + source
         }
-
-        return URL.createObjectURL(this.selectedFile)
       },
 
       statusShow (item) {

@@ -375,11 +375,11 @@
         // if (this.form.name === 'Super Customer') {
         //   this.alert('warning', 'Data Ini Tidak Dapat Diubah atau Dihapus')
         // } else {
-          this.loadingButton = true
-          const result = await this.apiService.deleteData(this.$http, `customer/${this.form.id}`)
-          this.alert(result.data.status, result.data.message)
-          this.read()
-          this.dialogClose()
+        this.loadingButton = true
+        const result = await this.apiService.deleteData(this.$http, `customer/${this.form.id}`)
+        this.alert(result.data.status, result.data.message)
+        this.read()
+        this.dialogClose()
         // }
       },
 

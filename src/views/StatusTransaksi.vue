@@ -250,25 +250,25 @@
 
     methods: {
       dialogOpen (action, item) {
-        const rolesPakem = [
-          'Menunggu Konfirmasi',
-          'Sedang Dikemas',
-          'Dalam Antrian Pengiriman',
-          'Dalam Pengiriman',
-          'Pengiriman Selesai',
-          'Pengiriman Selesai - Konfirmasi Pengguna',
-          'Transaksi Dibatalkan',
-        ]
+        // const rolesPakem = [
+        //   'Menunggu Konfirmasi',
+        //   'Sedang Dikemas',
+        //   'Dalam Antrian Pengiriman',
+        //   'Dalam Pengiriman',
+        //   'Pengiriman Selesai',
+        //   'Pengiriman Selesai - Konfirmasi Pengguna',
+        //   'Transaksi Dibatalkan',
+        // ]
 
         // if (item && rolesPakem.includes(item.name)) {
         //   this.alert('warning', 'Data Ini Tidak Dapat Diubah atau Dihapus')
         // } else {
-          if (action === 'Ubah' || action === 'Hapus') {
-            this.form.id = item.id
-            this.form.name = item.name
-          }
-          this.action = action
-          this.dialog = true
+        if (action === 'Ubah' || action === 'Hapus') {
+          this.form.id = item.id
+          this.form.name = item.name
+        }
+        this.action = action
+        this.dialog = true
         // }
       },
 

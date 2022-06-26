@@ -75,7 +75,7 @@
               </v-avatar>
             </template>
 
-            <template v-slot:[`item.status`]="{ item }">
+            <template v-slot:[`item.deleted_at`]="{ item }">
               <v-chip
                 class="ma-2"
                 :color="item.deleted_at === null ? 'light-blue darken-3' : 'red accent-3'"
@@ -462,7 +462,7 @@
         },
         {
           text: 'Status',
-          value: 'status',
+          value: 'deleted_at',
           align: 'start',
           sortable: true,
           class: 'primary--text',
@@ -630,11 +630,11 @@
       },
 
       fotoPreview (source) {
-        if (source) {
+        if (this.selectedFile) {
+          return URL.createObjectURL(this.selectedFile)
+        } else if (source) {
           return this.$file + source
         }
-
-        return URL.createObjectURL(this.selectedFile)
       },
 
       statusShow (action, item) {

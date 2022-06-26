@@ -422,7 +422,7 @@
                       <div class="px-4">
                         <v-row class="align-center">
                           <v-col
-                            class="d-flex justify-center"
+                            class="d-flex justify-lg-start justify-center"
                             cols="12"
                             md="3"
                           >

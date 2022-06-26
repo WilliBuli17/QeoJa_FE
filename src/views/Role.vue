@@ -250,17 +250,17 @@
 
     methods: {
       dialogOpen (action, item) {
-        const rolesPakem = ['Owner', 'Manager', 'Admin Penjualan', 'Admin Gudang', 'Admin Ekspedisi']
+        // const rolesPakem = ['Owner', 'Manager', 'Admin Penjualan', 'Admin Gudang', 'Admin Ekspedisi']
 
         // if (item && rolesPakem.includes(item.name)) {
         //   this.alert('warning', 'Data Ini Tidak Dapat Diubah atau Dihapus')
         // } else {
-          if (action === 'Ubah' || action === 'Hapus') {
-            this.form.id = item.id
-            this.form.name = item.name
-          }
-          this.action = action
-          this.dialog = true
+        if (action === 'Ubah' || action === 'Hapus') {
+          this.form.id = item.id
+          this.form.name = item.name
+        }
+        this.action = action
+        this.dialog = true
         // }
       },
 
