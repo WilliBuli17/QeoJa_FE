@@ -72,7 +72,7 @@
           >
             <v-card-text>
               <app-text-autocomplete
-                v-if="action !== 'Laporan Transaksi/Pendapatan'"
+                v-if="action !== 'Laporan Transaksi (Pendapatan)'"
                 v-model="form.productId"
                 class="my-5"
                 :items="dataProduk"
@@ -162,20 +162,10 @@
 
           <v-spacer />
 
-          <!-- <v-toolbar-items>
-            <v-btn
-              dark
-              text
-              @click="cetak"
-            >
-              Cetak
-            </v-btn>
-          </v-toolbar-items> -->
-
           <vue-excel-xlsx
             :data="dataShow"
             :columns="returnColumns"
-            :file-name="action"
+            :file-name="`${timeNow}_${action}_${tipe}_${tahun}`"
             :file-type="'xlsx'"
             :sheet-name="tipe"
           >
@@ -203,8 +193,15 @@
           <span class="text-h4">Unit : {{ produkPreview.unit }}</span>
         </v-card-text>
 
+        <v-card-text
+          v-if="tahun"
+          class="mt-n3"
+        >
+          <span class="text-h4">Tahun : {{ tahun }}</span>
+        </v-card-text>
+
         <v-data-table
-          v-if="action === 'Laporan Stock/Pengeluaran'"
+          v-if="action === 'Laporan Stock (Pengeluaran)'"
           :headers="headersShow"
           :items="dataShow"
           class="mt-10"
@@ -229,7 +226,7 @@
         </v-data-table>
 
         <v-data-table
-          v-if="action === 'Laporan Transaksi/Pendapatan'"
+          v-if="action === 'Laporan Transaksi (Pendapatan)'"
           :headers="headersShow"
           :items="dataShow"
           class="mt-10"
@@ -338,12 +335,12 @@
       dataLaporan: [
         {
           id: 1,
-          name: 'Laporan Stock/Pengeluaran',
+          name: 'Laporan Stock (Pengeluaran)',
           tipe: 'Bulanan',
         },
         {
           id: 2,
-          name: 'Laporan Stock/Pengeluaran',
+          name: 'Laporan Stock (Pengeluaran)',
           tipe: 'Tahunan',
         },
         {
@@ -358,12 +355,12 @@
         },
         {
           id: 5,
-          name: 'Laporan Transaksi/Pendapatan',
+          name: 'Laporan Transaksi (Pendapatan)',
           tipe: 'Bulanan',
         },
         {
           id: 6,
-          name: 'Laporan Transaksi/Pendapatan',
+          name: 'Laporan Transaksi (Pendapatan)',
           tipe: 'Tahunan',
         },
       ],
@@ -389,13 +386,18 @@
       dataProduk: [],
       years: [],
       dataShow: [],
+      tahun: null,
     }),
 
     computed: {
+      timeNow () {
+        const current = new Date()
+        return `${current.getFullYear()}-${current.getMonth() + 1}-${current.getDate()}_${current.getHours()}-${current.getMinutes()}-${current.getSeconds()}`
+      },
       headersShow () {
         let objectHeader
 
-        if (this.action === 'Laporan Stock/Pengeluaran') {
+        if (this.action === 'Laporan Stock (Pengeluaran)') {
           if (this.tipe === 'Bulanan') {
             objectHeader = [
               {
@@ -515,7 +517,7 @@
               },
             ]
           }
-        } else if (this.action === 'Laporan Transaksi/Pendapatan') {
+        } else if (this.action === 'Laporan Transaksi (Pendapatan)') {
           if (this.tipe === 'Bulanan') {
             objectHeader = [
               {
@@ -707,7 +709,7 @@
       returnColumns () {
         let objectColumns
 
-        if (this.action === 'Laporan Stock/Pengeluaran') {
+        if (this.action === 'Laporan Stock (Pengeluaran)') {
           if (this.tipe === 'Bulanan') {
             objectColumns = [
               {
@@ -771,7 +773,7 @@
               },
             ]
           }
-        } else if (this.action === 'Laporan Transaksi/Pendapatan') {
+        } else if (this.action === 'Laporan Transaksi (Pendapatan)') {
           if (this.tipe === 'Bulanan') {
             objectColumns = [
               {
@@ -925,6 +927,7 @@
         this.loadingButton = false
         this.action = null
         this.tipe = null
+        this.tahun = null
         this.read()
       },
 
@@ -951,18 +954,24 @@
           let result
           this.overlay = true
 
-          if (this.action === 'Laporan Stock/Pengeluaran' && this.tipe === 'Bulanan') {
+          if (this.action === 'Laporan Stock (Pengeluaran)' && this.tipe === 'Bulanan') {
             result = await this.apiService.getData(this.$http, `laporanStockBulanan/${this.form.productId}/${this.form.yearOnly}`)
           } else if (this.action === 'Laporan Penjualan Produk' && this.tipe === 'Bulanan') {
             result = await this.apiService.getData(this.$http, `laporanPenjualanBulanan/${this.form.productId}/${this.form.yearOnly}`)
-          } else if (this.action === 'Laporan Transaksi/Pendapatan' && this.tipe === 'Bulanan') {
+          } else if (this.action === 'Laporan Transaksi (Pendapatan)' && this.tipe === 'Bulanan') {
             result = await this.apiService.getData(this.$http, `laporanPendapatanBulanan/${this.form.yearOnly}`)
-          } else if (this.action === 'Laporan Stock/Pengeluaran' && this.tipe === 'Tahunan') {
+          } else if (this.action === 'Laporan Stock (Pengeluaran)' && this.tipe === 'Tahunan') {
             result = await this.apiService.getData(this.$http, `laporanStockTahunan/${this.form.productId}/${this.form.startYear}/${this.form.endYear}`)
           } else if (this.action === 'Laporan Penjualan Produk' && this.tipe === 'Tahunan') {
             result = await this.apiService.getData(this.$http, `laporanPenjualanTahunan/${this.form.productId}/${this.form.startYear}/${this.form.endYear}`)
-          } else if (this.action === 'Laporan Transaksi/Pendapatan' && this.tipe === 'Tahunan') {
+          } else if (this.action === 'Laporan Transaksi (Pendapatan)' && this.tipe === 'Tahunan') {
             result = await this.apiService.getData(this.$http, `laporanPendapatanTahunan/${this.form.startYear}/${this.form.endYear}`)
+          }
+
+          if (this.form.startYear) {
+            this.tahun = `${this.form.startYear} - ${this.form.endYear}`
+          } else if (this.form.yearOnly) {
+            this.tahun = this.form.yearOnly
           }
 
           this.overlay = false
